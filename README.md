@@ -28,8 +28,45 @@ class MyApp extends StatelessWidget {
 ![Two Page 1](/.media/two_page_1.png?raw=true)
 
 ![Two Page 2](/.media/two_page_2.png?raw=true)
+## Direct Data Access
+Direct access is for advanced uses cases. The above layouts should be suitable for most apps.
 
-## Documentation
+There may be cases where you want to access multi screen information instead of just using the above layout widgets. Here is how to do that.
+### MultiScreenInfo
+`MultiScreenInfo` is a Widget that lets you access information about the device directly in your Widget tree, it will rebuild when the data changes.
+```dart
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: MultiScreenInfo(
+        builder: (info) {
+          return Column(
+            children: <Widget>[
+              Text('The below information is from the Surface Duo SDK'),
+              Text('isAppSpanned: ${info.surfaceDuoInfoModel.isSpanned}'),
+              Text('hingeAngle: ${info.surfaceDuoInfoModel.hingeAngle}'),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+```
+### PlatformHandlers
+If you need access to information about the device outside of the Widget tree, you can also make platform calls yourself.
+#### SurfaceDuoPlatformHandler
+```dart
+Future getSurfaceDuoInfo() async {
+    var hingeAngle = await SurfaceDuoPlatformHandler.getHingeAngle();
+    var isDual = await SurfaceDuoPlatformHandler.getIsDual();
+    var isSpanned = await SurfaceDuoPlatformHandler.getIsSpanned();
+    var nonFunctionalBounds = await SurfaceDuoPlatformHandler.getNonFunctionalBounds();
+  }
+```
+
+## Extra Documentation
 - [Microsoft Dual Screen](https://docs.microsoft.com/en-us/dual-screen/introduction)
 - [Samsung Flex Mode](https://developer.samsung.com/galaxy-z/flex-mode.html)
 - [Android Window DeviceState](https://developer.android.com/reference/androidx/window/DeviceState)
