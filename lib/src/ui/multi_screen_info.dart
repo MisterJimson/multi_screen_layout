@@ -23,8 +23,10 @@ class _MultiScreenInfoState extends State<MultiScreenInfo>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    info = (PageStorage.of(context).readState(context)
-            as MultiScreenLayoutInfoModel) ??
+    info = (PageStorage.of(context).readState(
+          context,
+          identifier: 'MultiScreenInfo',
+        ) as MultiScreenLayoutInfoModel) ??
         MultiScreenLayoutInfoModel.unknown();
     updateInfo();
   }
@@ -44,7 +46,11 @@ class _MultiScreenInfoState extends State<MultiScreenInfo>
       var _info = await MultiScreenPlatformHandler.getInfoModel() ??
           MultiScreenLayoutInfoModel.unknown();
       if (mounted) {
-        PageStorage.of(context).writeState(context, _info);
+        PageStorage.of(context).writeState(
+          context,
+          _info,
+          identifier: 'MultiScreenInfo',
+        );
         setState(() {
           info = _info;
         });
