@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:multi_screen_layout/multi_screen_layout.dart';
+import 'package:multi_screen_layout_example/surface_duo_info_page.dart';
 
 void main() {
   runApp(MaterialApp(home: MyApp()));
@@ -9,46 +10,63 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TwoPageLayout(
-      child: _buildMainPage(),
-      secondChild: _buildSecondPage(),
+      child: MainPage(),
+      secondChild: SecondPage(),
     );
   }
+}
 
-  Widget _buildMainPage() {
+class MainPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Main Page'),
       ),
-      body: Center(
-        child: MultiScreenInfo(
-          builder: (info) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Text('This page always displays!'),
-                Text(
-                    'isDualScreenDevice: ${info.surfaceDuoInfoModel.isDualScreenDevice}'),
-                Text('isAppSpanned: ${info.surfaceDuoInfoModel.isSpanned}'),
-                Text('hingeAngle: ${info.surfaceDuoInfoModel.hingeAngle}'),
-                RaisedButton(
-                  child: Text('Test'),
-                  onPressed: () {
-                    MultiScreenPlatformHandler.getInfoModel();
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('This page always displays!'),
+          ),
+          Expanded(
+            child: ListView(
+              children: [
+                ListTile(
+                  title: Text('Surface Duo Device Info'),
+                  trailing: Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => SurfaceDuoInfoPage()));
                   },
                 ),
               ],
-            );
-          },
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }
+}
 
-  Widget _buildSecondPage() {
+class SecondPage extends StatelessWidget {
+  final bool showAppBar;
+
+  const SecondPage({
+    Key key,
+    this.showAppBar = true,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Second Page'),
-      ),
+      appBar: showAppBar
+          ? AppBar(
+              title: Text('Second Page'),
+            )
+          : null,
       backgroundColor: Colors.tealAccent,
       body: Center(
         child: Column(
