@@ -57,55 +57,64 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, ActivityAware 
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
-    val isDual = isDualScreenDevice()
-    if (isDual == null || !isDual) {
-      result.success(false)
-    } else {
-      try {
-        if (call.method == "isDualScreenDevice") {
-          if (isDual) {
-            result.success(true)
-          } else {
-            result.success(false)
-          }
-        } else if (call.method == "isAppSpanned") {
-          val isAppSpanned = isAppSpanned();
-          if (isAppSpanned != null && isAppSpanned) {
-            result.success(true)
-          } else {
-            result.success(false)
-          }
-        } else if (call.method == "getNonFunctionalBounds") {
-          val nonFunctionalBounds = getNonFunctionalBounds();
-          if (nonFunctionalBounds == null) {
-            result.success(null)
-          } else {
-            val json = Gson().toJson(nonFunctionalBounds)
-            result.success(json)
-          }
-        } else if (call.method == "getInfoModel") {
-          if (!mSensorsSetup) {
-            setupSensors()
-          }
-          val infoModel = getInfoModel();
-          if (infoModel == null) {
-            result.success(null)
-          } else {
-            val json = Gson().toJson(infoModel)
-            result.success(json)
-          }
-        } else if (call.method == "getHingeAngle") {
-          if (!mSensorsSetup) {
-            setupSensors()
-          }
-          result.success(mCurrentHingeAngle)
-        } else {
-          result.notImplemented()
+    val isDual = isDualScreenDevice() ?: false
+    try {
+      if (call.method == "isDualScreenDevice") {
+        result.success(isDual)
+      } else if (call.method == "isAppSpanned") {
+        if (!isDual) {
+          result.success(false)
+          return
         }
-      } catch (e: Exception) {
-        result.success(false)
+        val isAppSpanned = isAppSpanned();
+        if (isAppSpanned != null && isAppSpanned) {
+          result.success(true)
+        } else {
+          result.success(false)
+        }
+      } else if (call.method == "getNonFunctionalBounds") {
+        if (!isDual) {
+          result.success(null)
+          return
+        }
+        val nonFunctionalBounds = getNonFunctionalBounds();
+        if (nonFunctionalBounds == null) {
+          result.success(null)
+        } else {
+          val json = Gson().toJson(nonFunctionalBounds)
+          result.success(json)
+        }
+      } else if (call.method == "getInfoModel") {
+        if (!isDual) {
+          result.success(null)
+          return
+        }
+        if (!mSensorsSetup) {
+          setupSensors()
+        }
+        val infoModel = getInfoModel();
+        if (infoModel == null) {
+          result.success(null)
+        } else {
+          val json = Gson().toJson(infoModel)
+          result.success(json)
+        }
+      } else if (call.method == "getHingeAngle") {
+        if (!isDual) {
+          result.success(null)
+          return
+        }
+        if (!mSensorsSetup) {
+          setupSensors()
+        }
+        result.success(mCurrentHingeAngle)
+      } else {
+        result.notImplemented()
       }
+    } catch (e: Exception) {
+      result.success(false)
     }
+
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {

@@ -22,7 +22,7 @@ class TwoPageLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiScreenInfo(
       builder: (info) {
-        if (!info.surfaceDuoInfoModel.isSpanned) {
+        if (!info.isSpanned) {
           return child;
         }
         return Row(

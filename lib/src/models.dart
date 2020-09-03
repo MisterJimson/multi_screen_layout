@@ -4,6 +4,8 @@ import 'package:multi_screen_layout/src/devices/surface_duo.dart';
 class MultiScreenLayoutInfoModel {
   final SurfaceDuoInfoModel surfaceDuoInfoModel;
 
+  bool get isSpanned => surfaceDuoInfoModel.isSpanned;
+
   MultiScreenLayoutInfoModel({this.surfaceDuoInfoModel});
 
   factory MultiScreenLayoutInfoModel.unknown() => MultiScreenLayoutInfoModel(

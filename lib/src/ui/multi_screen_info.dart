@@ -41,7 +41,8 @@ class _MultiScreenInfoState extends State<MultiScreenInfo>
 
   Future updateInfo() async {
     if (mounted) {
-      var _info = await MultiScreenPlatformHandler.getInfoModel();
+      var _info = await MultiScreenPlatformHandler.getInfoModel() ??
+          MultiScreenLayoutInfoModel.unknown();
       if (mounted) {
         PageStorage.of(context).writeState(context, _info);
         setState(() {
