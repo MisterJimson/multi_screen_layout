@@ -1,4 +1,6 @@
 # Multi Screen Layout for Flutter
+[![pub package](https://img.shields.io/pub/v/multi_screen_layout.svg?label=multi_screen_layout&color=blue)](https://pub.dev/packages/multi_screen_layout)
+
 A collection of Widgets that make multi screen user experiences easy to build
 ## Supported Devices
 - [x] Surface Duo
