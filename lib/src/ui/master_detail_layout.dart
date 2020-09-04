@@ -20,31 +20,20 @@ class MasterDetailLayout extends StatelessWidget {
         return Navigator(
           onPopPage: (route, result) => route.didPop(result),
           pages: [
-            CustomBuilderPage(
+            MaterialPage(
               key: Key('master'),
-              routeBuilder: (context, settings) {
-                return MaterialPageRoute(
-                  maintainState: false,
-                  builder: (_) {
-                    return TwoPageLayout(
-                      child: master,
-                      secondChild: detail,
-                    );
-                  },
-                  settings: settings,
+              builder: (context) {
+                return TwoPageLayout(
+                  child: master,
+                  secondChild: detail,
                 );
               },
             ),
             if (!info.isSpanned && isSelected)
-              CustomBuilderPage(
+              MaterialPage(
                 key: Key('detail'),
-                routeBuilder: (context, settings) {
-                  return MaterialPageRoute(
-                    builder: (_) {
-                      return detail;
-                    },
-                    settings: settings,
-                  );
+                builder: (context) {
+                  return detail;
                 },
               ),
           ],

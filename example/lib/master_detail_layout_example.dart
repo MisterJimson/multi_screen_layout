@@ -8,18 +8,18 @@ class MasterDetailLayoutExample extends StatefulWidget {
 }
 
 class _MasterDetailLayoutExampleState extends State<MasterDetailLayoutExample> {
-  int itemNumber;
+  int selectedItem;
 
   @override
   Widget build(BuildContext context) {
     return MasterDetailLayout(
       master: Master(onItemSelected: (selected) {
         setState(() {
-          itemNumber = selected;
+          selectedItem = selected;
         });
       }),
-      detail: Detail(itemNumber: itemNumber),
-      isSelected: itemNumber != null,
+      detail: Detail(itemNumber: selectedItem),
+      isSelected: selectedItem != null,
     );
   }
 }
@@ -37,6 +37,15 @@ class Master extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Item List'),
+        actions: [
+          FlatButton(
+            child: Text(
+              'CLEAR SELECTION',
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed: () => onItemSelected(null),
+          ),
+        ],
       ),
       body: ListView(
         children: [
