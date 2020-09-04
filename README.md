@@ -65,7 +65,7 @@ class _MasterDetailLayoutExampleState extends State<MasterDetailLayoutExample> {
   }
 }
 ```
-![MasterDetail](https://raw.githubusercontent.com/MisterJimson/multi_screen_layout/main/.media/master_detail.gif)
+![MasterDetail](/.media/master_detail.gif)
 
 ## Direct Data Access
 Direct access is for advanced uses cases. The above layouts should be suitable for most apps.
