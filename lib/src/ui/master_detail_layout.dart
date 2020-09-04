@@ -6,7 +6,7 @@ class MasterDetailLayout extends StatelessWidget {
   final Widget detail;
   final bool isSelected;
 
-  MasterDetailLayout({
+  const MasterDetailLayout({
     Key key,
     this.master,
     this.detail,
