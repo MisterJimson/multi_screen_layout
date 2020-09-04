@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:multi_screen_layout/multi_screen_layout.dart';
 import 'package:multi_screen_layout_example/surface_duo_info_page.dart';
+import 'package:multi_screen_layout_example/two_page_layout_example.dart';
 
 void main() {
   runApp(MaterialApp(home: MyApp()));
@@ -32,6 +33,16 @@ class MainPage extends StatelessWidget {
           Expanded(
             child: ListView(
               children: [
+                ListTile(
+                  title: Text('Two Page Layout Example'),
+                  trailing: Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => TwoPageLayoutExample()));
+                  },
+                ),
                 ListTile(
                   title: Text('Surface Duo Device Info'),
                   trailing: Icon(Icons.chevron_right),
