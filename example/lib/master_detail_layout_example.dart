@@ -8,52 +8,18 @@ class MasterDetailLayoutExample extends StatefulWidget {
 }
 
 class _MasterDetailLayoutExampleState extends State<MasterDetailLayoutExample> {
-  int itemNumber = 0;
+  int itemNumber;
 
   @override
   Widget build(BuildContext context) {
-    return MultiScreenInfo(
-      builder: (info) {
-        return Navigator(
-          onPopPage: (Route route, result) {
-            return route.didPop(result);
-          },
-          pages: [
-            CustomBuilderPage(
-              key: Key('master'),
-              routeBuilder: (context, settings) {
-                return MaterialPageRoute(
-                  builder: (_) {
-                    return TwoPageLayout(
-                      child: Master(
-                        onItemSelected: (x) {
-                          setState(() {
-                            itemNumber = x;
-                          });
-                        },
-                      ),
-                      secondChild: Detail(itemNumber: itemNumber),
-                    );
-                  },
-                  settings: settings,
-                );
-              },
-            ),
-            if (!info.isSpanned && itemNumber != 0)
-              CustomBuilderPage(
-                key: Key('detail'),
-                routeBuilder: (context, settings) {
-                  return MaterialPageRoute(
-                    builder: (_) {
-                      return Detail(itemNumber: itemNumber);
-                    },
-                    settings: settings,
-                  );
-                },
-              ),
-          ],
-        );
-      },
+    return MasterDetailLayout(
+      master: Master(onItemSelected: (selected) {
+        setState(() {
+          itemNumber = selected;
+        });
+      }),
+      detail: Detail(itemNumber: itemNumber),
+      isSelected: itemNumber != null,
     );
   }
 }
@@ -72,33 +38,29 @@ class Master extends StatelessWidget {
       appBar: AppBar(
         title: Text('Item List'),
       ),
-      body: MultiScreenInfo(
-        builder: (info) {
-          return ListView(
-            children: [
-              for (var i = 1; i <= 10; i++)
-                ListTile(
-                  title: Text(i.toString()),
-                  trailing: Icon(Icons.chevron_right),
-                  onTap: () {
-                    onItemSelected(i);
-                  },
-                ),
-            ],
-          );
-        },
+      body: ListView(
+        children: [
+          for (var i = 1; i <= 10; i++)
+            ListTile(
+              title: Text(i.toString()),
+              trailing: Icon(Icons.chevron_right),
+              onTap: () {
+                onItemSelected(i);
+              },
+            ),
+        ],
       ),
     );
   }
 }
 
 class Detail extends StatelessWidget {
+  final int itemNumber;
+
   const Detail({
     Key key,
     @required this.itemNumber,
   }) : super(key: key);
-
-  final int itemNumber;
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +69,7 @@ class Detail extends StatelessWidget {
         title: Text('Detail View'),
       ),
       body: Center(
-        child: Text(itemNumber == 0 ? 'No Selection' : 'Item #$itemNumber'),
+        child: Text(itemNumber == null ? 'No Selection' : 'Item #$itemNumber'),
       ),
     );
   }
