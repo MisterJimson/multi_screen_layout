@@ -52,20 +52,18 @@ class _MasterDetailLayoutExampleState extends State<MasterDetailLayoutExample> {
   @override
   Widget build(BuildContext context) {
     return MasterDetailLayout(
-              // Master is a widget that displays a list
-      master: Master(onItemSelected: (selected) {
+      master: EmailList(onItemSelected: (selected) {
         setState(() {
           selectedItem = selected;
         });
       }),
-              // Detail is a widget that displays a detailed view of the selected item
-      detail: Detail(itemNumber: selectedItem),
+      detail: EmailDetail(itemNumber: selectedItem),
       isSelected: selectedItem != null,
     );
   }
 }
 ```
-![MasterDetail](/.media/master_detail.gif)
+![MasterDetail](https://raw.githubusercontent.com/MisterJimson/multi_screen_layout/main/.media/master_detail.gif)
 
 ## Direct Data Access
 Direct access is for advanced uses cases. The above layouts should be suitable for most apps.
