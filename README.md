@@ -12,7 +12,7 @@ If you know of other devices that could support multi screen layouts, please sub
 ### TwoPageLayout
 Displays two Widgets, one per screen, on a dual screen device when the app is being spanned across both screens. This is designed to be used to accomplish Two Page, Dual View, and Companion Pane [dual screen app patterns](https://docs.microsoft.com/en-us/dual-screen/introduction#dual-screen-app-patterns).
 
-On a non multi screen device, or when the app is only running on a single screen, only the first page will display.
+On a single screen device, or when the app is only running on a single screen, only the first page will display.
 
 ```dart
 class MyApp extends StatelessWidget {
@@ -25,9 +25,46 @@ class MyApp extends StatelessWidget {
   }
 }
 ```
-![Two Page 1](/.media/two_page_1.png?raw=true)
+![Two Page 1](https://raw.githubusercontent.com/MisterJimson/multi_screen_layout/main/.media/two_page_1.png)
 
-![Two Page 2](/.media/two_page_2.png?raw=true)
+![Two Page 2](https://raw.githubusercontent.com/MisterJimson/multi_screen_layout/main/.media/two_page_2.png)
+### MasterDetailLayout
+Very similar to `TwoPageLayout`. This layout has better support for having related, "deeper", content in the second page that would usually be accessed by navigating to a new page.
+
+It's common to use this type of layout when you have a list of items that when tapped let you view a detailed view of the item. Email and instant messaging apps are examples of this.
+
+On a single screen device, or when the app is only running on a single screen, `master` will display first. When `isSelected` is true, `detail` is displayed as a new page on top of `master`, similar to using `Navigator.push`.
+
+When spanned across 2 screens, both `master` and `detail` display at the same time and no navigation occurs. Even when `isSelected` is false.
+
+`MasterDetailLayout` also handles switching between spanned and non-spanned modes appropriately, so the UI will be the same if you select and then span, or span and then select.
+ 
+```dart
+class MasterDetailLayoutExample extends StatefulWidget {
+  @override
+  _MasterDetailLayoutExampleState createState() =>
+      _MasterDetailLayoutExampleState();
+}
+
+class _MasterDetailLayoutExampleState extends State<MasterDetailLayoutExample> {
+  int selectedItem;
+
+  @override
+  Widget build(BuildContext context) {
+    return MasterDetailLayout(
+      master: EmailList(onItemSelected: (selected) {
+        setState(() {
+          selectedItem = selected;
+        });
+      }),
+      detail: EmailDetail(itemNumber: selectedItem),
+      isSelected: selectedItem != null,
+    );
+  }
+}
+```
+![MasterDetail](https://raw.githubusercontent.com/MisterJimson/multi_screen_layout/main/.media/master_detail.gif)
+
 ## Direct Data Access
 Direct access is for advanced uses cases. The above layouts should be suitable for most apps.
 

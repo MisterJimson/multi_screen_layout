@@ -1,3 +1,7 @@
+## 0.0.3
+
+* Added `MasterDetailLayout`
+
 ## 0.0.2
 
 * Fixed error when used with ListView
