@@ -6,7 +6,12 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.os.Handler
+import android.os.Looper
 import androidx.annotation.NonNull
+import androidx.core.util.Consumer
+import androidx.window.DeviceState
+import androidx.window.WindowManager
 import com.microsoft.device.display.DisplayMask
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
@@ -17,6 +22,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
 import com.google.gson.Gson
+import java.util.concurrent.Executor
 
 class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
   /// The MethodChannel that will the communication between Flutter and native Android
@@ -24,7 +30,9 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, ActivityAware 
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
   /// when the Flutter Engine is detached from the Activity
   private lateinit var channel: MethodChannel
+  private var activity: Activity? = null;
 
+  // Surface Duo SDK
   private val HINGE_ANGLE_SENSOR_NAME = "Hinge Angle"
   private var mSensorsSetup: Boolean = false
   private var mSensorManager: SensorManager? = null
@@ -32,7 +40,18 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, ActivityAware 
   private var mSensorListener: SensorEventListener? = null
   private var mCurrentHingeAngle: Float = 0.0f
 
-  private var activity: Activity? = null;
+  // AndroidX Window Manager Device Posture
+  private var windowManager: WindowManager? = null
+  private val deviceStateChangeCallback = DeviceStateChangeCallback()
+  private var windowLayoutInfo: DeviceState? = null
+  private val handler = Handler(Looper.getMainLooper())
+  val mainThreadExecutor = Executor { r: Runnable -> handler.post(r) }
+
+  inner class DeviceStateChangeCallback : Consumer<DeviceState> {
+    override fun accept(newLayoutInfo: DeviceState) {
+      windowLayoutInfo = newLayoutInfo
+    }
+  }
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.flutterEngine.dartExecutor, "multi_screen_layout")
@@ -117,24 +136,38 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, ActivityAware 
 
   }
 
+  fun setupWindowManager(binding: ActivityPluginBinding) {
+    windowManager = WindowManager(binding.activity, null)
+    windowManager?.registerDeviceStateChangeCallback(mainThreadExecutor, deviceStateChangeCallback)
+  }
+
+  fun teardownWindowManager() {
+    windowManager?.unregisterDeviceStateChangeCallback(deviceStateChangeCallback)
+    windowManager = null
+  }
+
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
     channel.setMethodCallHandler(null)
   }
 
   override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-    activity = binding.activity;
+    activity = binding.activity
+    setupWindowManager(binding)
   }
 
   override fun onDetachedFromActivity() {
-    activity = null;
+    activity = null
+    teardownWindowManager()
   }
 
   override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-    activity = binding.activity;
+    activity = binding.activity
+    setupWindowManager(binding)
   }
 
   override fun onDetachedFromActivityForConfigChanges() {
-    activity = null;
+    activity = null
+    teardownWindowManager()
   }
 
   fun isDualScreenDevice(): Boolean? {
