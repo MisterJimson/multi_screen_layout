@@ -12,6 +12,9 @@ import 'package:multi_screen_layout/src/ui/multi_screen_info.dart';
 class TwoPageLayout extends StatelessWidget {
   final Widget child;
   final Widget secondChild;
+
+  /// Allows you to disable the two page layout behavior for specific types of
+  /// multi screen devices
   final List<MultiScreenType> disableFor;
 
   const TwoPageLayout({

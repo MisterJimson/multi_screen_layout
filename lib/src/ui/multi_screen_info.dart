@@ -38,7 +38,15 @@ class _MultiScreenInfoState extends State<MultiScreenInfo>
 
   @override
   Widget build(BuildContext context) {
-    return widget.builder(info);
+    return StreamBuilder<DevicePosture>(
+      stream: MultiScreenPlatformHandler.onDevicePostureChanged,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          info = info.copyWith(posture: snapshot.data);
+        }
+        return widget.builder(info);
+      },
+    );
   }
 
   Future updateInfo() async {

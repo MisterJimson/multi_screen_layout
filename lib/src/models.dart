@@ -11,9 +11,19 @@ class MultiScreenLayoutInfoModel {
     this.surfaceDuoInfoModel,
   });
 
+  MultiScreenLayoutInfoModel copyWith({
+    DevicePosture posture,
+    SurfaceDuoInfoModel surfaceDuoInfoModel,
+  }) {
+    return MultiScreenLayoutInfoModel(
+      posture: posture ?? this.posture,
+      surfaceDuoInfoModel: surfaceDuoInfoModel ?? this.surfaceDuoInfoModel,
+    );
+  }
+
   factory MultiScreenLayoutInfoModel.fromPlatform(PlatformInfoModel info) =>
       MultiScreenLayoutInfoModel(
-        posture: _fromInt(info.devicePosture),
+        posture: devicePostureFromInt(info.devicePosture),
         surfaceDuoInfoModel:
             info.surfaceDuoInfoModel ?? SurfaceDuoInfoModel.unknown(),
       );
@@ -31,7 +41,7 @@ enum DevicePosture {
   unknown,
 }
 
-DevicePosture _fromInt(int value) {
+DevicePosture devicePostureFromInt(int value) {
   if (value == null) return DevicePosture.unknown;
 
   switch (value) {

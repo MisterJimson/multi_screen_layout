@@ -12,19 +12,22 @@ import androidx.annotation.NonNull
 import androidx.core.util.Consumer
 import androidx.window.DeviceState
 import androidx.window.WindowManager
+import com.google.gson.Gson
 import com.microsoft.device.display.DisplayMask
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import io.flutter.plugin.common.BinaryMessenger
+import io.flutter.plugin.common.EventChannel
+import io.flutter.plugin.common.EventChannel.EventSink
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
-import com.google.gson.Gson
 import java.util.concurrent.Executor
 
-class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
+class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler, ActivityAware {
   /// The MethodChannel that will the communication between Flutter and native Android
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -45,17 +48,20 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, ActivityAware 
   private val deviceStateChangeCallback = DeviceStateChangeCallback()
   private var deviceState: DeviceState? = null
   private val handler = Handler(Looper.getMainLooper())
-  val mainThreadExecutor = Executor { r: Runnable -> handler.post(r) }
+  private val mainThreadExecutor = Executor { r: Runnable -> handler.post(r) }
+  private var devicePostureEventSink: EventChannel.EventSink? = null
 
   inner class DeviceStateChangeCallback : Consumer<DeviceState> {
     override fun accept(newLayoutInfo: DeviceState) {
       deviceState = newLayoutInfo
+      devicePostureEventSink?.success(deviceState?.posture ?: 0)
     }
   }
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.flutterEngine.dartExecutor, "multi_screen_layout")
     channel.setMethodCallHandler(this);
+    init(flutterPluginBinding.binaryMessenger)
   }
 
   // This static function is optional and equivalent to onAttachedToEngine. It supports the old
@@ -71,8 +77,23 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, ActivityAware 
     @JvmStatic
     fun registerWith(registrar: Registrar) {
       val channel = MethodChannel(registrar.messenger(), "multi_screen_layout")
-      channel.setMethodCallHandler(MultiScreenLayoutPlugin())
+      val plugin = MultiScreenLayoutPlugin()
+      channel.setMethodCallHandler(plugin)
+      plugin.init(registrar.messenger())
     }
+  }
+
+  private fun init(messenger: BinaryMessenger) {
+    val eventChannel = EventChannel(messenger, "multi_screen_layout_device_posture")
+    eventChannel.setStreamHandler(this)
+  }
+
+  override fun onListen(o: Any?, eventSink: EventSink) {
+    devicePostureEventSink = eventSink
+  }
+
+  override fun onCancel(o: Any?) {
+    devicePostureEventSink = null
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
