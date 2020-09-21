@@ -1,5 +1,4 @@
-/// Contains data specific to the SurfaceDuo, this may be able to be made generic
-/// as more multi screen devices become available
+/// Contains data specific to the SurfaceDuo
 class SurfaceDuoInfoModel {
   final bool isDualScreenDevice;
   final bool isSpanned;
