@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
-import 'package:multi_screen_layout/src/devices/android_generic.dart';
+import 'package:multi_screen_layout/src/devices/android_standard.dart';
 import 'package:multi_screen_layout/src/devices/surface_duo.dart';
 import 'package:multi_screen_layout/src/models.dart';
 

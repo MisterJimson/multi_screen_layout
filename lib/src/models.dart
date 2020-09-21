@@ -1,4 +1,4 @@
-import 'package:multi_screen_layout/src/devices/android_generic.dart';
+import 'package:multi_screen_layout/src/devices/android_standard.dart';
 import 'package:multi_screen_layout/src/devices/surface_duo.dart';
 
 /// Contains all multi screen data our widgets need to layout
@@ -59,6 +59,10 @@ DevicePosture devicePostureFromInt(int value) {
 }
 
 enum MultiScreenType {
-  generic,
+  /// Android folding devices that expose their folding information using
+  /// the Jetpack Window Manager library.
+  ///
+  /// Includes: Samsung Z Fold 1/2, Samsung Z Flip
+  androidStandard,
   surfaceDuo,
 }

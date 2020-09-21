@@ -31,14 +31,15 @@ class TwoPageLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiScreenInfo(
       builder: (info) {
-        var displaySecondPageForGeneric =
+        var displaySecondPageForAndroidStandard =
             info.posture == DevicePosture.halfOpened &&
-                !disableFor.contains(MultiScreenType.generic);
+                !disableFor.contains(MultiScreenType.androidStandard);
         var displaySecondPageForSurfaceDuo =
             info.surfaceDuoInfoModel.isSpanned &&
                 !disableFor.contains(MultiScreenType.surfaceDuo);
 
-        if (displaySecondPageForGeneric || displaySecondPageForSurfaceDuo) {
+        if (displaySecondPageForAndroidStandard ||
+            displaySecondPageForSurfaceDuo) {
           return Row(
             children: <Widget>[
               Expanded(child: child),
