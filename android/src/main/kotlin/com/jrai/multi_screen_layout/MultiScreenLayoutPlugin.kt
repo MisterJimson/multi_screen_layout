@@ -43,13 +43,13 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, ActivityAware 
   // AndroidX Window Manager Device Posture
   private var windowManager: WindowManager? = null
   private val deviceStateChangeCallback = DeviceStateChangeCallback()
-  private var windowLayoutInfo: DeviceState? = null
+  private var deviceState: DeviceState? = null
   private val handler = Handler(Looper.getMainLooper())
   val mainThreadExecutor = Executor { r: Runnable -> handler.post(r) }
 
   inner class DeviceStateChangeCallback : Consumer<DeviceState> {
     override fun accept(newLayoutInfo: DeviceState) {
-      windowLayoutInfo = newLayoutInfo
+      deviceState = newLayoutInfo
     }
   }
 
@@ -112,6 +112,21 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, ActivityAware 
           setupSensors()
         }
         val infoModel = getInfoModel();
+        if (infoModel == null) {
+          result.success(null)
+        } else {
+          val json = Gson().toJson(infoModel)
+          result.success(json)
+        }
+      } else if (call.method == "getSurfaceDuoInfoModel") {
+        if (!isDual) {
+          result.success(null)
+          return
+        }
+        if (!mSensorsSetup) {
+          setupSensors()
+        }
+        val infoModel = getSurfaceDuoInfoModel();
         if (infoModel == null) {
           result.success(null)
         } else {
@@ -245,7 +260,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, ActivityAware 
     mSensorsSetup = true
   }
 
-  fun getInfoModel() : SurfaceDuoInfoModel? {
+  fun getSurfaceDuoInfoModel() : SurfaceDuoInfoModel? {
     if (activity == null) return null;
 
     val feature = "com.microsoft.device.display.displaymask"
@@ -283,6 +298,15 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, ActivityAware 
             nonFunctionalBounds = nonFunctionalBounds)
   }
 
+  fun getInfoModel() : InfoModel? {
+    if (activity == null || windowManager == null) return null;
+
+    val surfaceDuoInfoModel = getSurfaceDuoInfoModel();
+    val posture = deviceState?.posture;
+
+    return InfoModel(surfaceDuoInfoModel = surfaceDuoInfoModel, devicePosture = posture)
+  }
+
 }
 
 data class NonFunctionalBounds(
@@ -297,4 +321,9 @@ data class SurfaceDuoInfoModel(
         val isSpanned: Boolean,
         val hingeAngle: Float,
         val nonFunctionalBounds: NonFunctionalBounds?
+)
+
+data class InfoModel(
+        val surfaceDuoInfoModel: SurfaceDuoInfoModel?,
+        val devicePosture: Int?
 )
