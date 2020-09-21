@@ -6,8 +6,6 @@ class MultiScreenLayoutInfoModel {
   final DevicePosture posture;
   final SurfaceDuoInfoModel surfaceDuoInfoModel;
 
-  bool get isSpanned => surfaceDuoInfoModel.isSpanned;
-
   MultiScreenLayoutInfoModel({
     this.posture,
     this.surfaceDuoInfoModel,
@@ -48,4 +46,9 @@ DevicePosture _fromInt(int value) {
     default:
       return DevicePosture.unknown;
   }
+}
+
+enum MultiScreenType {
+  Generic,
+  SurfaceDuo,
 }

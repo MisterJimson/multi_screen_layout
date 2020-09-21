@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:multi_screen_layout/multi_screen_layout.dart';
 import 'package:multi_screen_layout/src/ui/multi_screen_info.dart';
 
 /// Always displays [child], [secondChild] is displayed if the app is spanned
@@ -11,27 +12,40 @@ import 'package:multi_screen_layout/src/ui/multi_screen_info.dart';
 class TwoPageLayout extends StatelessWidget {
   final Widget child;
   final Widget secondChild;
+  final List<MultiScreenType> disableFor;
 
   const TwoPageLayout({
     Key key,
-    this.child,
-    this.secondChild,
-  }) : super(key: key);
+    @required this.child,
+    @required this.secondChild,
+    this.disableFor = const [],
+  })  : assert(disableFor != null),
+        assert(child != null),
+        assert(secondChild != null),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MultiScreenInfo(
       builder: (info) {
-        if (!info.isSpanned) {
-          return child;
+        var displaySecondPageForGeneric =
+            info.posture == DevicePosture.halfOpened &&
+                !disableFor.contains(MultiScreenType.Generic);
+        var displaySecondPageForSurfaceDuo =
+            info.surfaceDuoInfoModel.isSpanned &&
+                !disableFor.contains(MultiScreenType.SurfaceDuo);
+
+        if (displaySecondPageForGeneric || displaySecondPageForSurfaceDuo) {
+          return Row(
+            children: <Widget>[
+              Expanded(child: child),
+              if (displaySecondPageForSurfaceDuo)
+                SizedBox(width: info.surfaceDuoInfoModel.seemThickness),
+              Expanded(child: secondChild),
+            ],
+          );
         }
-        return Row(
-          children: <Widget>[
-            Expanded(child: child),
-            SizedBox(width: info.surfaceDuoInfoModel.seemThickness),
-            Expanded(child: secondChild),
-          ],
-        );
+        return child;
       },
     );
   }

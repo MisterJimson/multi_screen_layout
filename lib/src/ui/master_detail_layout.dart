@@ -47,7 +47,7 @@ class MasterDetailLayout extends StatelessWidget {
                 );
               },
             ),
-            if (!info.isSpanned && isSelected)
+            if (!info.surfaceDuoInfoModel.isSpanned && isSelected)
               MaterialPage(
                 key: Key('detail'),
                 builder: (context) {

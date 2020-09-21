@@ -104,14 +104,10 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, ActivityAware 
           result.success(json)
         }
       } else if (call.method == "getInfoModel") {
-        if (!isDual) {
-          result.success(null)
-          return
-        }
-        if (!mSensorsSetup) {
+        if (isDual && !mSensorsSetup) {
           setupSensors()
         }
-        val infoModel = getInfoModel();
+        val infoModel = getInfoModel()
         if (infoModel == null) {
           result.success(null)
         } else {
@@ -266,6 +262,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, ActivityAware 
     val feature = "com.microsoft.device.display.displaymask"
     val pm = activity!!.packageManager
     val isDualScreenDevice = pm.hasSystemFeature(feature)
+    if (!isDualScreenDevice) return null
 
     val displayMask = DisplayMask.fromResourcesRectApproximation(activity)
     val boundings = displayMask.boundingRects
