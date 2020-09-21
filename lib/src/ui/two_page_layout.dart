@@ -33,10 +33,10 @@ class TwoPageLayout extends StatelessWidget {
       builder: (info) {
         var displaySecondPageForGeneric =
             info.posture == DevicePosture.halfOpened &&
-                !disableFor.contains(MultiScreenType.Generic);
+                !disableFor.contains(MultiScreenType.generic);
         var displaySecondPageForSurfaceDuo =
             info.surfaceDuoInfoModel.isSpanned &&
-                !disableFor.contains(MultiScreenType.SurfaceDuo);
+                !disableFor.contains(MultiScreenType.surfaceDuo);
 
         if (displaySecondPageForGeneric || displaySecondPageForSurfaceDuo) {
           return Row(

@@ -59,6 +59,6 @@ DevicePosture devicePostureFromInt(int value) {
 }
 
 enum MultiScreenType {
-  Generic,
-  SurfaceDuo,
+  generic,
+  surfaceDuo,
 }
