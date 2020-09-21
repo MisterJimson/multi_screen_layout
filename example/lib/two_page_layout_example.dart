@@ -14,7 +14,11 @@ class TwoPageLayoutExample extends StatelessWidget {
         ),
         secondChild: Center(
           child: Text(
-              'Hello from page 2! This only displays when spanned across 2 displays'),
+            'Hello from page 2! This only displays when spanned across 2 '
+            'displays or the device posture is half opened. Also known as '
+            'Samsung\'s Flex Mode.',
+            textAlign: TextAlign.center,
+          ),
         ),
       ),
     );

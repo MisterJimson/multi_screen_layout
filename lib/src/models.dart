@@ -1,5 +1,6 @@
 import 'package:multi_screen_layout/src/devices/android_standard.dart';
 import 'package:multi_screen_layout/src/devices/surface_duo.dart';
+import 'package:multi_screen_layout/src/util.dart';
 
 /// Contains all multi screen data our widgets need to layout
 class MultiScreenLayoutInfoModel {
@@ -39,23 +40,6 @@ enum DevicePosture {
   halfOpened,
   opened,
   unknown,
-}
-
-DevicePosture devicePostureFromInt(int value) {
-  if (value == null) return DevicePosture.unknown;
-
-  switch (value) {
-    case 1:
-      return DevicePosture.closed;
-    case 4:
-      return DevicePosture.flipped;
-    case 2:
-      return DevicePosture.halfOpened;
-    case 3:
-      return DevicePosture.opened;
-    default:
-      return DevicePosture.unknown;
-  }
 }
 
 enum MultiScreenType {
