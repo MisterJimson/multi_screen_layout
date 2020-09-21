@@ -4,15 +4,21 @@
 A collection of Widgets that make multi screen user experiences easy to build
 ## Supported Devices
 - [x] Surface Duo
-- [ ] Galaxy Z Fold
-- [ ] Galaxy Z Flip
+- [x] Galaxy Z Fold 1 (Flex Mode)
+- [x] Galaxy Z Fold 2 (Flex Mode)
+- [x] Galaxy Z Flip (Flex Mode)
+- [ ] LG Wing
 
 If you know of other devices that could support multi screen layouts, please submit a PR and add them to this list.
 ## Layouts
 ### TwoPageLayout
-Displays two Widgets, one per screen, on a dual screen device when the app is being spanned across both screens. This is designed to be used to accomplish Two Page, Dual View, and Companion Pane [dual screen app patterns](https://docs.microsoft.com/en-us/dual-screen/introduction#dual-screen-app-patterns).
+Displays two Widgets, one per screen. 
 
-On a single screen device, or when the app is only running on a single screen, only the first page will display.
+On a dual screen device when the app is being spanned across two screens, displays both widgets, one per screen. This is designed to be used to accomplish Two Page, Dual View, and Companion Pane [dual screen app patterns from Microsoft](https://docs.microsoft.com/en-us/dual-screen/introduction#dual-screen-app-patterns).
+
+On a folding screen device when the screen is half opened the screen is treated as a dual screen device. This is designed to be used to Accomplish [Flex Mode](https://developer.samsung.com/galaxy-z/flex-mode.html) user experiences.
+
+On a single screen device, or when the app is only running on a single screen, only `child` will be displayed.
 
 ```dart
 class MyApp extends StatelessWidget {
@@ -25,17 +31,22 @@ class MyApp extends StatelessWidget {
   }
 }
 ```
+#### Surface Duo Example
 ![Two Page 1](https://raw.githubusercontent.com/MisterJimson/multi_screen_layout/main/.media/two_page_1.png)
 
 ![Two Page 2](https://raw.githubusercontent.com/MisterJimson/multi_screen_layout/main/.media/two_page_2.png)
+#### Samsung Z Fold 2 Flex Mode Example
+TODO images
 ### MasterDetailLayout
 Very similar to `TwoPageLayout`. This layout has better support for having related, "deeper", content in the second page that would usually be accessed by navigating to a new page.
 
-It's common to use this type of layout when you have a list of items that when tapped let you view a detailed view of the item. Email and instant messaging apps are examples of this.
+It's common to use this type of layout when you have a list of items that when tapped let you view a detailed view of the item. Email and instant messaging apps are good examples of this.
 
 On a single screen device, or when the app is only running on a single screen, `master` will display first. When `isSelected` is true, `detail` is displayed as a new page on top of `master`, similar to using `Navigator.push`.
 
-When spanned across 2 screens, both `master` and `detail` display at the same time and no navigation occurs. Even when `isSelected` is false.
+When displaying on 2 screens, both `master` and `detail` display at the same time and no navigation occurs. Even when `isSelected` is false. 
+
+Similar to `TwoPageLayout`, on a folding screen device when the screen is half opened the screen is treated as a dual screen device.
 
 `MasterDetailLayout` also handles switching between spanned and non-spanned modes appropriately, so the UI will be the same if you select and then span, or span and then select.
  
@@ -63,7 +74,10 @@ class _MasterDetailLayoutExampleState extends State<MasterDetailLayoutExample> {
   }
 }
 ```
+#### Surface Duo Example
 ![MasterDetail](https://raw.githubusercontent.com/MisterJimson/multi_screen_layout/main/.media/master_detail.gif)
+#### Samsung Z Fold 2 Flex Mode Example
+TODO images
 
 ## Direct Data Access
 Direct access is for advanced uses cases. The above layouts should be suitable for most apps.
