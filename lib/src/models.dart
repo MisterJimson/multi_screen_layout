@@ -2,10 +2,15 @@ import 'package:multi_screen_layout/src/devices/android_standard.dart';
 import 'package:multi_screen_layout/src/devices/surface_duo.dart';
 import 'package:multi_screen_layout/src/util.dart';
 
-/// Contains all multi screen data our widgets need to layout
+/// Contains all multi screen data available
 class MultiScreenLayoutInfoModel {
+  /// Posture of the device
   final DevicePosture posture;
+
+  /// Fold direction
   final FoldDirection foldDirection;
+
+  /// Information from the Surface Duo SDK
   final SurfaceDuoInfoModel surfaceDuoInfoModel;
 
   MultiScreenLayoutInfoModel({
@@ -47,6 +52,8 @@ class MultiScreenLayoutInfoModel {
       );
 }
 
+/// The posture of a foldable device with a flexible screen or multiple physical
+/// screens.
 enum DevicePosture {
   closed,
   flipped,
@@ -61,7 +68,16 @@ enum MultiScreenType {
   ///
   /// Includes: Samsung Z Fold 1/2, Samsung Z Flip
   androidStandard,
+
+  /// Microsoft's Surface Duo
   surfaceDuo,
 }
 
-enum FoldDirection { vertical, horizontal }
+/// The direction parts of the screen would move to fold the device. This can
+/// change as the device is rotated.
+///
+/// For example if a device folds like a book, it folds horizontally.
+enum FoldDirection {
+  vertical,
+  horizontal,
+}

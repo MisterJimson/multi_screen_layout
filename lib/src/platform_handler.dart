@@ -16,6 +16,7 @@ const _devicePostureEventChannel =
 class MultiScreenPlatformHandler {
   MultiScreenPlatformHandler._();
 
+  /// Directly listen to changes in device posture
   static Stream<DevicePosture> onDevicePostureChanged =
       _devicePostureEventChannel
           .receiveBroadcastStream()
