@@ -23,6 +23,8 @@ class AndroidDevicePostureInfoPage extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                   Text('Posture: ${info.posture.toString()}'),
+                  Text(
+                      'Fold Direction: ${info.foldDirection?.toString() ?? 'null'}'),
                 ],
               ),
             ),

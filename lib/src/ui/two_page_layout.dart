@@ -40,14 +40,26 @@ class TwoPageLayout extends StatelessWidget {
 
         if (displaySecondPageForAndroidStandard ||
             displaySecondPageForSurfaceDuo) {
-          return Row(
-            children: <Widget>[
-              Expanded(child: child),
-              if (displaySecondPageForSurfaceDuo)
-                SizedBox(width: info.surfaceDuoInfoModel.seemThickness),
-              Expanded(child: secondChild),
-            ],
-          );
+          if (info.foldDirection == null ||
+              info.foldDirection == FoldDirection.horizontal) {
+            return Row(
+              children: <Widget>[
+                Expanded(child: child),
+                if (displaySecondPageForSurfaceDuo)
+                  SizedBox(width: info.surfaceDuoInfoModel.seemThickness),
+                Expanded(child: secondChild),
+              ],
+            );
+          } else {
+            return Column(
+              children: <Widget>[
+                Expanded(child: child),
+                if (displaySecondPageForSurfaceDuo)
+                  SizedBox(width: info.surfaceDuoInfoModel.seemThickness),
+                Expanded(child: secondChild),
+              ],
+            );
+          }
         }
         return child;
       },

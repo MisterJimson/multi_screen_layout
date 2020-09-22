@@ -226,7 +226,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
     return first.intersect(drawingRect)
   }
 
-  fun getNonFunctionalBounds(): NonFunctionalBounds? {
+  fun getNonFunctionalBounds(): Rect<Float>? {
     if (activity == null) return null;
 
     val displayMask = DisplayMask.fromResourcesRectApproximation(activity)
@@ -238,7 +238,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
 
     val density: Float = activity!!.resources.displayMetrics.density
 
-    return NonFunctionalBounds(
+    return Rect(
             top = first.top / density,
             bottom = first.bottom / density,
             left = first.left / density,
@@ -289,7 +289,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
     val boundings = displayMask.boundingRects
 
     var isSpanned = false;
-    var nonFunctionalBounds: NonFunctionalBounds? = null
+    var nonFunctionalBounds: Rect<Float>? = null
 
     if (boundings.isNotEmpty()) {
       val first = boundings[0]
@@ -301,7 +301,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
       val density: Float = activity!!.resources.displayMetrics.density
 
       if (isSpanned) {
-        nonFunctionalBounds = NonFunctionalBounds(
+        nonFunctionalBounds = Rect(
                 top = first.top / density,
                 bottom = first.bottom / density,
                 left = first.left / density,
@@ -322,26 +322,46 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
     val surfaceDuoInfoModel = getSurfaceDuoInfoModel();
     val posture = deviceState?.posture;
 
-    return InfoModel(surfaceDuoInfoModel = surfaceDuoInfoModel, devicePosture = posture)
+    return InfoModel(
+            surfaceDuoInfoModel = surfaceDuoInfoModel,
+            devicePosture = posture,
+            displayFeatures = windowManager?.windowLayoutInfo?.displayFeatures?.map 
+            { 
+              DisplayFeature(
+                      type = it.type,
+                      bounds = Rect(
+                              top = it.bounds.top, 
+                              bottom = it.bounds.bottom, 
+                              left = it.bounds.left, 
+                              right = it.bounds.right
+                      )
+              ) 
+            } ?: emptyList()
+    )
   }
 
 }
 
-data class NonFunctionalBounds(
-        val top: Float,
-        val bottom: Float,
-        val left: Float,
-        val right: Float
+data class Rect<T>(
+        val top: T,
+        val bottom: T,
+        val left: T,
+        val right: T
 )
 
 data class SurfaceDuoInfoModel(
         val isDualScreenDevice: Boolean,
         val isSpanned: Boolean,
         val hingeAngle: Float,
-        val nonFunctionalBounds: NonFunctionalBounds?
+        val nonFunctionalBounds: Rect<Float>?
 )
 
 data class InfoModel(
         val surfaceDuoInfoModel: SurfaceDuoInfoModel?,
-        val devicePosture: Int?
+        val devicePosture: Int?,
+        val displayFeatures: List<DisplayFeature>
+)
+data class DisplayFeature(
+        val type: Int,
+        val bounds: Rect<Int>
 )
