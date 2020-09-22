@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:multi_screen_layout/multi_screen_layout.dart';
 import 'package:multi_screen_layout/src/ui/multi_screen_info.dart';
 
 /// Always displays [child], [secondChild] is displayed if the app is spanned
@@ -12,26 +13,55 @@ class TwoPageLayout extends StatelessWidget {
   final Widget child;
   final Widget secondChild;
 
+  /// Allows you to disable the two page layout behavior for specific types of
+  /// multi screen devices
+  final List<MultiScreenType> disableFor;
+
   const TwoPageLayout({
     Key key,
-    this.child,
-    this.secondChild,
-  }) : super(key: key);
+    @required this.child,
+    @required this.secondChild,
+    this.disableFor = const [],
+  })  : assert(disableFor != null),
+        assert(child != null),
+        assert(secondChild != null),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MultiScreenInfo(
       builder: (info) {
-        if (!info.isSpanned) {
-          return child;
+        var displaySecondPageForAndroidStandard =
+            info.posture == DevicePosture.halfOpened &&
+                !disableFor.contains(MultiScreenType.androidStandard);
+        var displaySecondPageForSurfaceDuo =
+            info.surfaceDuoInfoModel.isSpanned &&
+                !disableFor.contains(MultiScreenType.surfaceDuo);
+
+        if (displaySecondPageForAndroidStandard ||
+            displaySecondPageForSurfaceDuo) {
+          if (info.foldDirection == null ||
+              info.foldDirection == FoldDirection.horizontal) {
+            return Row(
+              children: <Widget>[
+                Expanded(child: child),
+                if (displaySecondPageForSurfaceDuo)
+                  SizedBox(width: info.surfaceDuoInfoModel.seemThickness),
+                Expanded(child: secondChild),
+              ],
+            );
+          } else {
+            return Column(
+              children: <Widget>[
+                Expanded(child: child),
+                if (displaySecondPageForSurfaceDuo)
+                  SizedBox(width: info.surfaceDuoInfoModel.seemThickness),
+                Expanded(child: secondChild),
+              ],
+            );
+          }
         }
-        return Row(
-          children: <Widget>[
-            Expanded(child: child),
-            SizedBox(width: info.surfaceDuoInfoModel.seemThickness),
-            Expanded(child: secondChild),
-          ],
-        );
+        return child;
       },
     );
   }

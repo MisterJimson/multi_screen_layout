@@ -24,17 +24,33 @@ class MasterDetailLayout extends StatelessWidget {
   final Widget detail;
   final bool isSelected;
 
+  /// Allows you to disable the two page layout behavior for specific types of
+  /// multi screen devices
+  final List<MultiScreenType> disableFor;
+
   const MasterDetailLayout({
     Key key,
-    this.master,
-    this.detail,
-    this.isSelected,
-  }) : super(key: key);
+    @required this.master,
+    @required this.detail,
+    @required this.isSelected,
+    this.disableFor = const [],
+  })  : assert(disableFor != null),
+        assert(master != null),
+        assert(detail != null),
+        assert(isSelected != null),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MultiScreenInfo(
       builder: (info) {
+        var displaySecondPageForAndroidStandard =
+            info.posture == DevicePosture.halfOpened &&
+                !disableFor.contains(MultiScreenType.androidStandard);
+        var displaySecondPageForSurfaceDuo =
+            info.surfaceDuoInfoModel.isSpanned &&
+                !disableFor.contains(MultiScreenType.surfaceDuo);
+
         return Navigator(
           onPopPage: (route, result) => route.didPop(result),
           pages: [
@@ -47,7 +63,9 @@ class MasterDetailLayout extends StatelessWidget {
                 );
               },
             ),
-            if (!info.isSpanned && isSelected)
+            if (!(displaySecondPageForAndroidStandard ||
+                    displaySecondPageForSurfaceDuo) &&
+                isSelected)
               MaterialPage(
                 key: Key('detail'),
                 builder: (context) {
