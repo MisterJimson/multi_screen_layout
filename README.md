@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
 
 ![Two Page 2](https://raw.githubusercontent.com/MisterJimson/multi_screen_layout/main/.media/two_page_2.png)
 #### Samsung Z Fold 2 Flex Mode Example
-TODO images
+[See video here](https://i.imgur.com/I6lAkYF.mp4)
 ### MasterDetailLayout
 Very similar to `TwoPageLayout`. This layout has better support for having related, "deeper", content in the second page that would usually be accessed by navigating to a new page.
 
@@ -77,8 +77,7 @@ class _MasterDetailLayoutExampleState extends State<MasterDetailLayoutExample> {
 #### Surface Duo Example
 ![MasterDetail](https://raw.githubusercontent.com/MisterJimson/multi_screen_layout/main/.media/master_detail.gif)
 #### Samsung Z Fold 2 Flex Mode Example
-TODO images
-
+[See video here](https://i.imgur.com/dHFlvMx.mp4)
 ## Direct Data Access
 Direct access is for advanced uses cases. The above layouts should be suitable for most apps.
 
