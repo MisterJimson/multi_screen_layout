@@ -56,21 +56,17 @@ class MasterDetailLayout extends StatelessWidget {
           pages: [
             MaterialPage(
               key: Key('master'),
-              builder: (context) {
-                return TwoPageLayout(
-                  child: master,
-                  secondChild: detail,
-                );
-              },
+              child: TwoPageLayout(
+                child: master,
+                secondChild: detail,
+              ),
             ),
             if (!(displaySecondPageForAndroidStandard ||
                     displaySecondPageForSurfaceDuo) &&
                 isSelected)
               MaterialPage(
                 key: Key('detail'),
-                builder: (context) {
-                  return detail;
-                },
+                child: detail,
               ),
           ],
         );

@@ -1,3 +1,7 @@
+## 0.2.0
+
+* Updated code to work with Flutter 1.22 
+
 ## 0.1.0
 
 * Added support for Samsung Flex Mode for both `TwoPageLayout` and `MasterDetailLayout`

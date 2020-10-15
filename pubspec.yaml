@@ -1,11 +1,11 @@
 name: multi_screen_layout
 description: A collection of Widgets that make multi screen user experiences easy to build
-version: 0.1.0
+version: 0.2.0
 homepage: https://github.com/MisterJimson/multi_screen_layout
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
-  flutter: ">=1.20.0 <2.0.0"
+  flutter: ">=1.22.0 <2.0.0"
 
 dependencies:
   flutter:
