@@ -1,8 +1,6 @@
 import 'package:multi_screen_layout/src/models.dart';
 
 DevicePosture devicePostureFromInt(int value) {
-  if (value == null) return DevicePosture.unknown;
-
   switch (value) {
     case 1:
       return DevicePosture.closed;

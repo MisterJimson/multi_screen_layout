@@ -7,9 +7,8 @@ class MultiScreenInfo extends StatefulWidget {
   final Widget Function(MultiScreenLayoutInfoModel info) builder;
 
   const MultiScreenInfo({
-    @required this.builder,
-  })  : assert(builder != null),
-        super(key: const PageStorageKey('MultiScreenInfo'));
+    required this.builder,
+  }) : super(key: const PageStorageKey('MultiScreenInfo'));
 
   @override
   _MultiScreenInfoState createState() => _MultiScreenInfoState();
@@ -17,16 +16,16 @@ class MultiScreenInfo extends StatefulWidget {
 
 class _MultiScreenInfoState extends State<MultiScreenInfo>
     with WidgetsBindingObserver {
-  MultiScreenLayoutInfoModel info;
+  MultiScreenLayoutInfoModel info = MultiScreenLayoutInfoModel.unknown();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    info = (PageStorage.of(context).readState(
+    WidgetsBinding.instance?.addObserver(this);
+    info = (PageStorage.of(context)?.readState(
           context,
           identifier: 'MultiScreenInfo',
-        ) as MultiScreenLayoutInfoModel) ??
+        ) as MultiScreenLayoutInfoModel?) ??
         MultiScreenLayoutInfoModel.unknown();
     updateInfo();
   }
@@ -51,10 +50,9 @@ class _MultiScreenInfoState extends State<MultiScreenInfo>
 
   Future updateInfo() async {
     if (mounted) {
-      var _info = await MultiScreenPlatformHandler.getInfoModel() ??
-          MultiScreenLayoutInfoModel.unknown();
+      var _info = await MultiScreenPlatformHandler.getInfoModel();
       if (mounted) {
-        PageStorage.of(context).writeState(
+        PageStorage.of(context)?.writeState(
           context,
           _info,
           identifier: 'MultiScreenInfo',
@@ -68,7 +66,7 @@ class _MultiScreenInfoState extends State<MultiScreenInfo>
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance?.removeObserver(this);
     super.dispose();
   }
 }

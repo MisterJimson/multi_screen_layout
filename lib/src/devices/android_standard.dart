@@ -6,9 +6,9 @@ class PlatformInfoModel {
   final List<PlatformDisplayFeature> displayFeatures;
 
   PlatformInfoModel({
-    this.surfaceDuoInfoModel,
-    this.devicePosture,
-    this.displayFeatures,
+    required this.surfaceDuoInfoModel,
+    required this.devicePosture,
+    required this.displayFeatures,
   });
 
   factory PlatformInfoModel.fromJson(Map<String, dynamic> json) =>
@@ -17,7 +17,7 @@ class PlatformInfoModel {
               ? SurfaceDuoInfoModel.fromJson(
                   json["surfaceDuoInfoModel"],
                 )
-              : null,
+              : SurfaceDuoInfoModel.unknown(),
           devicePosture: json["devicePosture"],
           displayFeatures: (json["displayFeatures"] as Iterable)
               .map((e) => PlatformDisplayFeature.fromJson(e))
@@ -29,18 +29,16 @@ class PlatformDisplayFeature {
   final IntRect bounds;
 
   PlatformDisplayFeature({
-    this.type,
-    this.bounds,
+    required this.type,
+    required this.bounds,
   });
 
   factory PlatformDisplayFeature.fromJson(Map<String, dynamic> json) =>
       PlatformDisplayFeature(
         type: json["type"],
-        bounds: json["bounds"] != null
-            ? IntRect.fromJson(
-                json["bounds"],
-              )
-            : null,
+        bounds: IntRect.fromJson(
+          json["bounds"],
+        ),
       );
 }
 
@@ -51,10 +49,10 @@ class IntRect {
   final int right;
 
   IntRect({
-    this.top,
-    this.bottom,
-    this.left,
-    this.right,
+    required this.top,
+    required this.bottom,
+    required this.left,
+    required this.right,
   });
 
   factory IntRect.fromJson(Map<String, dynamic> json) => IntRect(

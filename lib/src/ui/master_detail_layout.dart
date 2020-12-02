@@ -29,16 +29,12 @@ class MasterDetailLayout extends StatelessWidget {
   final List<MultiScreenType> disableFor;
 
   const MasterDetailLayout({
-    Key key,
-    @required this.master,
-    @required this.detail,
-    @required this.isSelected,
+    Key? key,
+    required this.master,
+    required this.detail,
+    required this.isSelected,
     this.disableFor = const [],
-  })  : assert(disableFor != null),
-        assert(master != null),
-        assert(detail != null),
-        assert(isSelected != null),
-        super(key: key);
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +51,7 @@ class MasterDetailLayout extends StatelessWidget {
           onPopPage: (route, result) => route.didPop(result),
           pages: [
             MaterialPage(
-              key: Key('master'),
+              key: Key('master') as LocalKey?,
               child: TwoPageLayout(
                 child: master,
                 secondChild: detail,
@@ -65,7 +61,7 @@ class MasterDetailLayout extends StatelessWidget {
                     displaySecondPageForSurfaceDuo) &&
                 isSelected)
               MaterialPage(
-                key: Key('detail'),
+                key: Key('detail') as LocalKey?,
                 child: detail,
               ),
           ],
