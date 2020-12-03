@@ -52,7 +52,11 @@ class MasterDetailLayout extends StatelessWidget {
                 !disableFor.contains(MultiScreenType.surfaceDuo);
 
         return Navigator(
-          onPopPage: (route, result) => route.didPop(result),
+          onPopPage: (route, result) {
+            if (route.isFirst) Navigator.maybePop(context);
+            var did = route.didPop(result);
+            return did;
+          },
           pages: [
             MaterialPage(
               key: Key('master'),
