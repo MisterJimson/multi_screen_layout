@@ -37,6 +37,9 @@ class Master extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Item List'),
+        leading: BackButton(
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: [
           FlatButton(
             child: Text(
