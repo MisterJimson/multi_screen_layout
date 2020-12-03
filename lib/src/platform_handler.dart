@@ -18,9 +18,7 @@ class MultiScreenPlatformHandler {
 
   /// Directly listen to changes in device posture
   static Stream<DevicePosture> onDevicePostureChanged =
-      _devicePostureEventChannel
-          .receiveBroadcastStream()
-          .map((value) => devicePostureFromInt((value as int)));
+      _setupOnDevicePostureChanged();
 
   /// Provides access to SurfaceDuo specific information
   static SurfaceDuoPlatformHandler surfaceDuo = SurfaceDuoPlatformHandler._();
@@ -35,6 +33,20 @@ class MultiScreenPlatformHandler {
       var infoModel = PlatformInfoModel.fromJson(jsonDecode(result));
       return MultiScreenLayoutInfoModel.fromPlatform(infoModel);
     }
+  }
+
+  static Stream<DevicePosture> _setupOnDevicePostureChanged() {
+    if (!Platform.isAndroid)
+      return _unsupportedPlatformDevicePostureStream().asBroadcastStream();
+
+    return _devicePostureEventChannel
+        .receiveBroadcastStream()
+        .map((value) => devicePostureFromInt((value as int)));
+  }
+
+  static Stream<DevicePosture>
+      _unsupportedPlatformDevicePostureStream() async* {
+    yield DevicePosture.unknown;
   }
 }
 
