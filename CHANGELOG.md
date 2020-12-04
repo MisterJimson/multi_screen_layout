@@ -1,3 +1,7 @@
+## 2.0.0-nullsafety.0
+
+* Null safety preview release
+
 ## 1.0.0
 
 * Stable release. No changes.

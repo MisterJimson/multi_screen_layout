@@ -1,6 +1,6 @@
 name: multi_screen_layout
 description: A collection of Widgets that make multi screen user experiences easy to build
-version: 1.0.0
+version: 2.0.0-nullsafety.0
 homepage: https://github.com/MisterJimson/multi_screen_layout
 repository: https://github.com/MisterJimson/multi_screen_layout
 
