@@ -13,6 +13,7 @@ import androidx.core.util.Consumer
 import androidx.window.DeviceState
 import androidx.window.WindowManager
 import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 import com.microsoft.device.display.DisplayMask
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
@@ -343,25 +344,25 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
 }
 
 data class Rect<T>(
-        val top: T,
-        val bottom: T,
-        val left: T,
-        val right: T
+        @SerializedName("top") val top: T,
+        @SerializedName("bottom") val bottom: T,
+        @SerializedName("left") val left: T,
+        @SerializedName("right") val right: T
 )
 
 data class SurfaceDuoInfoModel(
-        val isDualScreenDevice: Boolean,
-        val isSpanned: Boolean,
-        val hingeAngle: Float,
-        val nonFunctionalBounds: Rect<Float>?
+        @SerializedName("isDualScreenDevice") val isDualScreenDevice: Boolean,
+        @SerializedName("isSpanned") val isSpanned: Boolean,
+        @SerializedName("hingeAngle") val hingeAngle: Float,
+        @SerializedName("nonFunctionalBounds") val nonFunctionalBounds: Rect<Float>?
 )
 
 data class InfoModel(
-        val surfaceDuoInfoModel: SurfaceDuoInfoModel?,
-        val devicePosture: Int?,
-        val displayFeatures: List<DisplayFeature>
+        @SerializedName("surfaceDuoInfoModel") val surfaceDuoInfoModel: SurfaceDuoInfoModel?,
+        @SerializedName("devicePosture") val devicePosture: Int?,
+        @SerializedName("displayFeatures") val displayFeatures: List<DisplayFeature>
 )
 data class DisplayFeature(
-        val type: Int,
-        val bounds: Rect<Int>
+        @SerializedName("type") val type: Int,
+        @SerializedName("bounds") val bounds: Rect<Int>
 )
