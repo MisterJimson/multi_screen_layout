@@ -1,3 +1,8 @@
+## 1.0.1
+
+* Minor bug fixes and example updates
+* Fix errors when using minifyEnabled on Android
+
 ## 2.0.0-nullsafety.0
 
 * Null safety preview release
