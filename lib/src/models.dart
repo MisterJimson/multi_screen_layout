@@ -14,15 +14,15 @@ class MultiScreenLayoutInfoModel {
   final SurfaceDuoInfoModel surfaceDuoInfoModel;
 
   MultiScreenLayoutInfoModel({
-    this.posture,
-    this.surfaceDuoInfoModel,
-    this.foldDirection,
+    required this.posture,
+    required this.surfaceDuoInfoModel,
+    required this.foldDirection,
   });
 
   MultiScreenLayoutInfoModel copyWith({
-    DevicePosture posture,
-    FoldDirection foldDirection,
-    SurfaceDuoInfoModel surfaceDuoInfoModel,
+    DevicePosture? posture,
+    FoldDirection? foldDirection,
+    SurfaceDuoInfoModel? surfaceDuoInfoModel,
   }) {
     return MultiScreenLayoutInfoModel(
       posture: posture ?? this.posture,
@@ -31,6 +31,7 @@ class MultiScreenLayoutInfoModel {
     );
   }
 
+  //todo FoldDirection for Surface Duo
   factory MultiScreenLayoutInfoModel.fromPlatform(PlatformInfoModel info) {
     FoldDirection foldDirection;
     if (info.displayFeatures.length == 1) {
@@ -38,17 +39,20 @@ class MultiScreenLayoutInfoModel {
               info.displayFeatures.first.bounds.bottom == 0
           ? FoldDirection.horizontal
           : FoldDirection.vertical;
+    } else {
+      foldDirection = FoldDirection.none;
     }
     return MultiScreenLayoutInfoModel(
       posture: devicePostureFromInt(info.devicePosture),
       foldDirection: foldDirection,
-      surfaceDuoInfoModel:
-          info.surfaceDuoInfoModel ?? SurfaceDuoInfoModel.unknown(),
+      surfaceDuoInfoModel: info.surfaceDuoInfoModel,
     );
   }
 
   factory MultiScreenLayoutInfoModel.unknown() => MultiScreenLayoutInfoModel(
         surfaceDuoInfoModel: SurfaceDuoInfoModel.unknown(),
+        foldDirection: FoldDirection.none,
+        posture: DevicePosture.unknown,
       );
 }
 
@@ -80,4 +84,5 @@ enum MultiScreenType {
 enum FoldDirection {
   vertical,
   horizontal,
+  none,
 }

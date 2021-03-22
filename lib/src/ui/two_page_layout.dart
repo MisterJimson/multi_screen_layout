@@ -18,14 +18,11 @@ class TwoPageLayout extends StatelessWidget {
   final List<MultiScreenType> disableFor;
 
   const TwoPageLayout({
-    Key key,
-    @required this.child,
-    @required this.secondChild,
+    Key? key,
+    required this.child,
+    required this.secondChild,
     this.disableFor = const [],
-  })  : assert(disableFor != null),
-        assert(child != null),
-        assert(secondChild != null),
-        super(key: key);
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +37,8 @@ class TwoPageLayout extends StatelessWidget {
 
         if (displaySecondPageForAndroidStandard ||
             displaySecondPageForSurfaceDuo) {
-          if (info.foldDirection == null ||
-              info.foldDirection == FoldDirection.horizontal) {
+          if (info.foldDirection == FoldDirection.horizontal ||
+              info.foldDirection == FoldDirection.none) {
             return Row(
               children: <Widget>[
                 Expanded(child: child),

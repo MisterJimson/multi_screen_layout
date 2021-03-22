@@ -25,10 +25,10 @@ class MultiScreenPlatformHandler {
 
   /// Gets all relevant multi screen information in one call to the platform
   static Future<MultiScreenLayoutInfoModel> getInfoModel() async {
-    if (!Platform.isAndroid) return null;
+    if (!Platform.isAndroid) return MultiScreenLayoutInfoModel.unknown();
     final result = await _methodChannel.invokeMethod<String>('getInfoModel');
     if (result == null) {
-      return null;
+      return MultiScreenLayoutInfoModel.unknown();
     } else {
       var infoModel = PlatformInfoModel.fromJson(jsonDecode(result));
       return MultiScreenLayoutInfoModel.fromPlatform(infoModel);
@@ -58,29 +58,29 @@ class SurfaceDuoPlatformHandler {
     if (!Platform.isAndroid) return false;
     final isDual =
         await _methodChannel.invokeMethod<bool>('isDualScreenDevice');
-    return isDual;
+    return isDual ?? false;
   }
 
   static Future<bool> getIsSpanned() async {
     if (!Platform.isAndroid) return false;
     final isAppSpanned =
         await _methodChannel.invokeMethod<bool>('isAppSpanned');
-    return isAppSpanned;
+    return isAppSpanned ?? false;
   }
 
   static Future<double> getHingeAngle() async {
-    if (!Platform.isAndroid) return null;
+    if (!Platform.isAndroid) return 0;
     final hingeAngle =
         await _methodChannel.invokeMethod<double>('getHingeAngle');
-    return hingeAngle;
+    return hingeAngle ?? 0;
   }
 
   static Future<NonFunctionalBounds> getNonFunctionalBounds() async {
-    if (!Platform.isAndroid) return null;
+    if (!Platform.isAndroid) return NonFunctionalBounds.none();
     final result =
         await _methodChannel.invokeMethod<String>('getNonFunctionalBounds');
     if (result == null) {
-      return null;
+      return NonFunctionalBounds.none();
     } else {
       return NonFunctionalBounds.fromJson(jsonDecode(result));
     }

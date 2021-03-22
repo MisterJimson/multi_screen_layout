@@ -6,20 +6,20 @@ class SurfaceDuoInfoModel {
   final NonFunctionalBounds nonFunctionalBounds;
 
   double get seemThickness =>
-      (nonFunctionalBounds?.right ?? 0) - (nonFunctionalBounds?.left ?? 0);
+      (nonFunctionalBounds.right) - (nonFunctionalBounds.left);
 
   SurfaceDuoInfoModel({
-    this.isDualScreenDevice,
-    this.isSpanned,
-    this.hingeAngle,
-    this.nonFunctionalBounds,
+    required this.isDualScreenDevice,
+    required this.isSpanned,
+    required this.hingeAngle,
+    required this.nonFunctionalBounds,
   });
 
   factory SurfaceDuoInfoModel.unknown() => SurfaceDuoInfoModel(
         isDualScreenDevice: false,
         isSpanned: false,
         hingeAngle: 0,
-        nonFunctionalBounds: null,
+        nonFunctionalBounds: NonFunctionalBounds.none(),
       );
 
   factory SurfaceDuoInfoModel.fromJson(Map<String, dynamic> json) =>
@@ -31,7 +31,7 @@ class SurfaceDuoInfoModel {
             ? NonFunctionalBounds.fromJson(
                 json["nonFunctionalBounds"],
               )
-            : null,
+            : NonFunctionalBounds.none(),
       );
 }
 
@@ -42,10 +42,10 @@ class NonFunctionalBounds {
   final double right;
 
   NonFunctionalBounds({
-    this.bottom,
-    this.left,
-    this.right,
-    this.top,
+    required this.bottom,
+    required this.left,
+    required this.right,
+    required this.top,
   });
 
   factory NonFunctionalBounds.fromJson(Map<String, dynamic> json) =>
@@ -54,6 +54,13 @@ class NonFunctionalBounds {
         left: json["left"],
         right: json["right"],
         top: json["top"],
+      );
+
+  factory NonFunctionalBounds.none() => NonFunctionalBounds(
+        bottom: 0,
+        left: 0,
+        right: 0,
+        top: 0,
       );
 
   Map<String, dynamic> toJson() => {
