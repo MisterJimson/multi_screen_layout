@@ -10,7 +10,8 @@ import android.os.Handler
 import android.os.Looper
 import androidx.annotation.NonNull
 import androidx.core.util.Consumer
-import androidx.window.DeviceState
+import androidx.window.FoldingFeature
+import androidx.window.WindowLayoutInfo
 import androidx.window.WindowManager
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
@@ -44,23 +45,23 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
   private var mSensorListener: SensorEventListener? = null
   private var mCurrentHingeAngle: Float = 0.0f
 
-  // AndroidX Window Manager Device Posture
+  // AndroidX Window Manager
   private var windowManager: WindowManager? = null
-  private val deviceStateChangeCallback = DeviceStateChangeCallback()
-  private var deviceState: DeviceState? = null
+  private val layoutStateChangeCallback = LayoutStateChangeCallback()
+  private var windowLayoutInfo: WindowLayoutInfo? = null
   private val handler = Handler(Looper.getMainLooper())
   private val mainThreadExecutor = Executor { r: Runnable -> handler.post(r) }
-  private var devicePostureEventSink: EventChannel.EventSink? = null
+  private var windowLayoutInfoEventSink: EventChannel.EventSink? = null
 
-  inner class DeviceStateChangeCallback : Consumer<DeviceState> {
-    override fun accept(newLayoutInfo: DeviceState) {
-      deviceState = newLayoutInfo
-      devicePostureEventSink?.success(deviceState?.posture ?: 0)
+  inner class LayoutStateChangeCallback : Consumer<WindowLayoutInfo> {
+    override fun accept(newLayoutInfo: WindowLayoutInfo) {
+      windowLayoutInfo = newLayoutInfo
+      windowLayoutInfoEventSink?.success(windowLayoutInfo.toString())
     }
   }
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    channel = MethodChannel(flutterPluginBinding.flutterEngine.dartExecutor, "multi_screen_layout")
+    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "multi_screen_layout")
     channel.setMethodCallHandler(this);
     init(flutterPluginBinding.binaryMessenger)
   }
@@ -90,11 +91,11 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
   }
 
   override fun onListen(o: Any?, eventSink: EventSink) {
-    devicePostureEventSink = eventSink
+    windowLayoutInfoEventSink = eventSink
   }
 
   override fun onCancel(o: Any?) {
-    devicePostureEventSink = null
+    windowLayoutInfoEventSink = null
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
@@ -164,18 +165,17 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
         result.notImplemented()
       }
     } catch (e: Exception) {
-      result.success(false)
+      result.error("Unknown error", e.message, null)
     }
-
   }
 
-  fun setupWindowManager(binding: ActivityPluginBinding) {
-    windowManager = WindowManager(binding.activity, null)
-    windowManager?.registerDeviceStateChangeCallback(mainThreadExecutor, deviceStateChangeCallback)
+  private fun setupWindowManager(binding: ActivityPluginBinding) {
+    windowManager = WindowManager(binding.activity)
+    windowManager?.registerLayoutChangeCallback(mainThreadExecutor, layoutStateChangeCallback)
   }
 
-  fun teardownWindowManager() {
-    windowManager?.unregisterDeviceStateChangeCallback(deviceStateChangeCallback)
+  private fun teardownWindowManager() {
+    windowManager?.unregisterLayoutChangeCallback(layoutStateChangeCallback)
     windowManager = null
   }
 
@@ -203,7 +203,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
     teardownWindowManager()
   }
 
-  fun isDualScreenDevice(): Boolean? {
+  private fun isDualScreenDevice(): Boolean? {
     if (activity == null) return null;
 
     val feature = "com.microsoft.device.display.displaymask"
@@ -211,7 +211,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
     return pm.hasSystemFeature(feature)
   }
 
-  fun isAppSpanned(): Boolean? {
+  private fun isAppSpanned(): Boolean? {
     if (activity == null) return null;
 
     val displayMask = DisplayMask.fromResourcesRectApproximation(activity)
@@ -227,7 +227,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
     return first.intersect(drawingRect)
   }
 
-  fun getNonFunctionalBounds(): Rect<Float>? {
+  private fun getNonFunctionalBounds(): Rect<Float>? {
     if (activity == null) return null;
 
     val displayMask = DisplayMask.fromResourcesRectApproximation(activity)
@@ -247,7 +247,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
   }
 
   //todo what to do when SensorManager is null?
-  fun setupSensors() {
+  private fun setupSensors() {
     mSensorManager = activity!!.getSystemService(SENSOR_SERVICE) as SensorManager?
     val sensorList: List<Sensor> = mSensorManager!!.getSensorList(Sensor.TYPE_ALL)
 
@@ -278,7 +278,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
     mSensorsSetup = true
   }
 
-  fun getSurfaceDuoInfoModel() : SurfaceDuoInfoModel? {
+  private fun getSurfaceDuoInfoModel() : SurfaceDuoInfoModel? {
     if (activity == null) return null;
 
     val feature = "com.microsoft.device.display.displaymask"
@@ -317,16 +317,16 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
             nonFunctionalBounds = nonFunctionalBounds)
   }
 
-  fun getInfoModel() : InfoModel? {
+  private fun getInfoModel() : InfoModel? {
     if (activity == null || windowManager == null) return null;
 
     val surfaceDuoInfoModel = getSurfaceDuoInfoModel();
-    val posture = deviceState?.posture;
 
     return InfoModel(
             surfaceDuoInfoModel = surfaceDuoInfoModel,
-            devicePosture = posture,
-            displayFeatures = windowManager?.windowLayoutInfo?.displayFeatures?.map 
+            devicePosture = 0,
+            displayFeatures = windowLayoutInfo?.displayFeatures
+                    ?.filterIsInstance(FoldingFeature::class.java)?.map
             { 
               DisplayFeature(
                       type = it.type,
