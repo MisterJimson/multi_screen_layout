@@ -22,7 +22,7 @@ class AndroidDevicePostureInfoPage extends StatelessWidget {
                     'The below information is from the Jetpack Window Manager library',
                     textAlign: TextAlign.center,
                   ),
-                  Text('Posture: ${info.posture.toString()}'),
+                  Text('Folding State: ${info.foldingState.toString()}'),
                   Text(
                       'Fold Direction: ${info.foldDirection?.toString() ?? 'null'}'),
                 ],

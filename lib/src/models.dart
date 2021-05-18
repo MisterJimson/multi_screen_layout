@@ -4,8 +4,8 @@ import 'package:multi_screen_layout/src/util.dart';
 
 /// Contains all multi screen data available
 class MultiScreenLayoutInfoModel {
-  /// Posture of the device
-  final DevicePosture posture;
+  /// Folding state of the device
+  final FoldingState foldingState;
 
   /// Fold direction
   final FoldDirection foldDirection;
@@ -13,28 +13,38 @@ class MultiScreenLayoutInfoModel {
   /// Information from the Surface Duo SDK
   final SurfaceDuoInfoModel surfaceDuoInfoModel;
 
+  /// Based on the data provided by the system, should the UI span multiple
+  /// screens
+  final bool shouldDisplayAcrossScreens;
+
   MultiScreenLayoutInfoModel({
-    required this.posture,
+    required this.foldingState,
     required this.surfaceDuoInfoModel,
     required this.foldDirection,
+    required this.shouldDisplayAcrossScreens,
   });
 
   MultiScreenLayoutInfoModel copyWith({
-    DevicePosture? posture,
+    FoldingState? foldingState,
     FoldDirection? foldDirection,
     SurfaceDuoInfoModel? surfaceDuoInfoModel,
+    bool? shouldDisplayAcrossScreens,
   }) {
     return MultiScreenLayoutInfoModel(
-      posture: posture ?? this.posture,
+      foldingState: foldingState ?? this.foldingState,
       foldDirection: foldDirection ?? this.foldDirection,
       surfaceDuoInfoModel: surfaceDuoInfoModel ?? this.surfaceDuoInfoModel,
+      shouldDisplayAcrossScreens:
+          shouldDisplayAcrossScreens ?? this.shouldDisplayAcrossScreens,
     );
   }
 
   //todo FoldDirection for Surface Duo
   factory MultiScreenLayoutInfoModel.fromPlatform(PlatformInfoModel info) {
+    var hasFoldingDisplayFeature = info.displayFeatures.length == 1;
+
     FoldDirection foldDirection;
-    if (info.displayFeatures.length == 1) {
+    if (hasFoldingDisplayFeature) {
       foldDirection = info.displayFeatures.first.bounds.top == 0 ||
               info.displayFeatures.first.bounds.bottom == 0
           ? FoldDirection.horizontal
@@ -42,27 +52,39 @@ class MultiScreenLayoutInfoModel {
     } else {
       foldDirection = FoldDirection.none;
     }
+
+    bool shouldDisplayAcrossScreens;
+    if (hasFoldingDisplayFeature) {
+      shouldDisplayAcrossScreens = info.displayFeatures.first.isSeparating;
+    } else if (info.surfaceDuoInfoModel.isSpanned) {
+      shouldDisplayAcrossScreens = true;
+    } else {
+      shouldDisplayAcrossScreens = false;
+    }
+
     return MultiScreenLayoutInfoModel(
-      posture: devicePostureFromInt(info.devicePosture),
+      foldingState: hasFoldingDisplayFeature
+          ? foldingStateFromInt(info.displayFeatures.first.state)
+          : FoldingState.unknown,
       foldDirection: foldDirection,
       surfaceDuoInfoModel: info.surfaceDuoInfoModel,
+      shouldDisplayAcrossScreens: shouldDisplayAcrossScreens,
     );
   }
 
   factory MultiScreenLayoutInfoModel.unknown() => MultiScreenLayoutInfoModel(
         surfaceDuoInfoModel: SurfaceDuoInfoModel.unknown(),
         foldDirection: FoldDirection.none,
-        posture: DevicePosture.unknown,
+        foldingState: FoldingState.unknown,
+        shouldDisplayAcrossScreens: false,
       );
 }
 
 /// The posture of a foldable device with a flexible screen or multiple physical
 /// screens.
-enum DevicePosture {
-  closed,
-  flipped,
+enum FoldingState {
+  flat,
   halfOpened,
-  opened,
   unknown,
 }
 

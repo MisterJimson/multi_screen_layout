@@ -2,12 +2,10 @@ import 'package:multi_screen_layout/src/devices/surface_duo.dart';
 
 class PlatformInfoModel {
   final SurfaceDuoInfoModel surfaceDuoInfoModel;
-  final int devicePosture;
   final List<PlatformDisplayFeature> displayFeatures;
 
   PlatformInfoModel({
     required this.surfaceDuoInfoModel,
-    required this.devicePosture,
     required this.displayFeatures,
   });
 
@@ -18,7 +16,6 @@ class PlatformInfoModel {
                   json["surfaceDuoInfoModel"],
                 )
               : SurfaceDuoInfoModel.unknown(),
-          devicePosture: json["devicePosture"],
           displayFeatures: (json["displayFeatures"] as Iterable)
               .map((e) => PlatformDisplayFeature.fromJson(e))
               .toList());
@@ -26,16 +23,19 @@ class PlatformInfoModel {
 
 class PlatformDisplayFeature {
   final int state;
+  final bool isSeparating;
   final IntRect bounds;
 
   PlatformDisplayFeature({
     required this.state,
+    required this.isSeparating,
     required this.bounds,
   });
 
   factory PlatformDisplayFeature.fromJson(Map<String, dynamic> json) =>
       PlatformDisplayFeature(
         state: json["state"],
+        isSeparating: json['isSeparating'],
         bounds: IntRect.fromJson(
           json["bounds"],
         ),

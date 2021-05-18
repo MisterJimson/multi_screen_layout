@@ -29,7 +29,7 @@ import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
 import java.util.concurrent.Executor
 
-class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler, ActivityAware {
+class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
   /// The MethodChannel that will the communication between Flutter and native Android
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -51,19 +51,16 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
   private var windowLayoutInfo: WindowLayoutInfo? = null
   private val handler = Handler(Looper.getMainLooper())
   private val mainThreadExecutor = Executor { r: Runnable -> handler.post(r) }
-  private var windowLayoutInfoEventSink: EventChannel.EventSink? = null
 
   inner class LayoutStateChangeCallback : Consumer<WindowLayoutInfo> {
     override fun accept(newLayoutInfo: WindowLayoutInfo) {
       windowLayoutInfo = newLayoutInfo
-      windowLayoutInfoEventSink?.success(windowLayoutInfo.toString())
     }
   }
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "multi_screen_layout")
     channel.setMethodCallHandler(this);
-    init(flutterPluginBinding.binaryMessenger)
   }
 
   // This static function is optional and equivalent to onAttachedToEngine. It supports the old
@@ -81,21 +78,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
       val channel = MethodChannel(registrar.messenger(), "multi_screen_layout")
       val plugin = MultiScreenLayoutPlugin()
       channel.setMethodCallHandler(plugin)
-      plugin.init(registrar.messenger())
     }
-  }
-
-  private fun init(messenger: BinaryMessenger) {
-    val eventChannel = EventChannel(messenger, "multi_screen_layout_device_posture")
-    eventChannel.setStreamHandler(this)
-  }
-
-  override fun onListen(o: Any?, eventSink: EventSink) {
-    windowLayoutInfoEventSink = eventSink
-  }
-
-  override fun onCancel(o: Any?) {
-    windowLayoutInfoEventSink = null
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
@@ -324,12 +307,12 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
 
     return InfoModel(
             surfaceDuoInfoModel = surfaceDuoInfoModel,
-            devicePosture = 0,
             displayFeatures = windowLayoutInfo?.displayFeatures
                     ?.filterIsInstance(FoldingFeature::class.java)?.map
             { 
               DisplayFeature(
                       state = it.state,
+                      isSeparating = it.isSeparating,
                       bounds = Rect(
                               top = it.bounds.top, 
                               bottom = it.bounds.bottom, 
@@ -359,10 +342,10 @@ data class SurfaceDuoInfoModel(
 
 data class InfoModel(
         @SerializedName("surfaceDuoInfoModel") val surfaceDuoInfoModel: SurfaceDuoInfoModel?,
-        @SerializedName("devicePosture") val devicePosture: Int?,
         @SerializedName("displayFeatures") val displayFeatures: List<DisplayFeature>
 )
 data class DisplayFeature(
         @SerializedName("state") val state: Int,
+        @SerializedName("isSeparating") val isSeparating: Boolean,
         @SerializedName("bounds") val bounds: Rect<Int>
 )

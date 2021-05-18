@@ -28,21 +28,13 @@ class TwoPageLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiScreenInfo(
       builder: (info) {
-        var displaySecondPageForAndroidStandard =
-            info.posture == DevicePosture.halfOpened &&
-                !disableFor.contains(MultiScreenType.androidStandard);
-        var displaySecondPageForSurfaceDuo =
-            info.surfaceDuoInfoModel.isSpanned &&
-                !disableFor.contains(MultiScreenType.surfaceDuo);
-
-        if (displaySecondPageForAndroidStandard ||
-            displaySecondPageForSurfaceDuo) {
+        if (info.shouldDisplayAcrossScreens) {
           if (info.foldDirection == FoldDirection.horizontal ||
               info.foldDirection == FoldDirection.none) {
             return Row(
               children: <Widget>[
                 Expanded(child: child),
-                if (displaySecondPageForSurfaceDuo)
+                if (info.surfaceDuoInfoModel.seemThickness > 0)
                   SizedBox(width: info.surfaceDuoInfoModel.seemThickness),
                 Expanded(child: secondChild),
               ],
@@ -51,7 +43,7 @@ class TwoPageLayout extends StatelessWidget {
             return Column(
               children: <Widget>[
                 Expanded(child: child),
-                if (displaySecondPageForSurfaceDuo)
+                if (info.surfaceDuoInfoModel.seemThickness > 0)
                   SizedBox(width: info.surfaceDuoInfoModel.seemThickness),
                 Expanded(child: secondChild),
               ],

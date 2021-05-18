@@ -1,16 +1,12 @@
 import 'package:multi_screen_layout/src/models.dart';
 
-DevicePosture devicePostureFromInt(int value) {
+FoldingState foldingStateFromInt(int value) {
   switch (value) {
     case 1:
-      return DevicePosture.closed;
-    case 4:
-      return DevicePosture.flipped;
+      return FoldingState.flat;
     case 2:
-      return DevicePosture.halfOpened;
-    case 3:
-      return DevicePosture.opened;
+      return FoldingState.halfOpened;
     default:
-      return DevicePosture.unknown;
+      return FoldingState.unknown;
   }
 }
