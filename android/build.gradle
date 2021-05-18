@@ -41,6 +41,6 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation "androidx.window:window:1.0.0-alpha05"
+    implementation "androidx.window:window:1.0.0-alpha06"
     compileOnly files("com.microsoft.device.display.displaymask.jar")
 }
