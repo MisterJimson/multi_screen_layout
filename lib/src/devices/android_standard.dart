@@ -40,6 +40,12 @@ class PlatformDisplayFeature {
           json["bounds"],
         ),
       );
+
+  factory PlatformDisplayFeature.unknown() => PlatformDisplayFeature(
+        state: 0,
+        isSeparating: false,
+        bounds: IntRect.unknown(),
+      );
 }
 
 class IntRect {
@@ -60,5 +66,12 @@ class IntRect {
         bottom: json["bottom"],
         left: json["left"],
         right: json["right"],
+      );
+
+  factory IntRect.unknown() => IntRect(
+        top: -1,
+        bottom: -1,
+        left: -1,
+        right: -1,
       );
 }

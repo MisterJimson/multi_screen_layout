@@ -10,9 +10,16 @@ import 'package:multi_screen_layout/src/util.dart';
 
 const _methodChannel = const MethodChannel('multi_screen_layout');
 
+const _devicePostureEventChannel =
+    const EventChannel('multi_screen_layout_layout_state_change');
+
 /// Provides access to the platform to get multi screen information
 class MultiScreenPlatformHandler {
   MultiScreenPlatformHandler._();
+
+  /// Directly listen to changes in device posture
+  static Stream<PlatformDisplayFeature> onFoldingDisplayFeatureChanged =
+      _setupOnFoldingDisplayFeatureChanged();
 
   /// Provides access to SurfaceDuo specific information
   static SurfaceDuoPlatformHandler surfaceDuo = SurfaceDuoPlatformHandler._();
@@ -27,6 +34,22 @@ class MultiScreenPlatformHandler {
       var infoModel = PlatformInfoModel.fromJson(jsonDecode(result));
       return MultiScreenLayoutInfoModel.fromPlatform(infoModel);
     }
+  }
+
+  static Stream<PlatformDisplayFeature> _setupOnFoldingDisplayFeatureChanged() {
+    if (!Platform.isAndroid)
+      return _unsupportedOnFoldingDisplayFeatureChanged().asBroadcastStream();
+
+    return _devicePostureEventChannel.receiveBroadcastStream().map((value) {
+      return value == null
+          ? PlatformDisplayFeature.unknown()
+          : PlatformDisplayFeature.fromJson(jsonDecode(value));
+    });
+  }
+
+  static Stream<PlatformDisplayFeature>
+      _unsupportedOnFoldingDisplayFeatureChanged() async* {
+    yield PlatformDisplayFeature.unknown();
   }
 }
 

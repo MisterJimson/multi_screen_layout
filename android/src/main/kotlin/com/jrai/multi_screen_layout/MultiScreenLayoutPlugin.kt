@@ -29,7 +29,7 @@ import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
 import java.util.concurrent.Executor
 
-class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
+class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler, ActivityAware {
   /// The MethodChannel that will the communication between Flutter and native Android
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -51,16 +51,38 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, ActivityAware 
   private var windowLayoutInfo: WindowLayoutInfo? = null
   private val handler = Handler(Looper.getMainLooper())
   private val mainThreadExecutor = Executor { r: Runnable -> handler.post(r) }
+  private var windowLayoutInfoEventSink: EventChannel.EventSink? = null
 
   inner class LayoutStateChangeCallback : Consumer<WindowLayoutInfo> {
     override fun accept(newLayoutInfo: WindowLayoutInfo) {
       windowLayoutInfo = newLayoutInfo
+
+      val foldingFeature = windowLayoutInfo?.displayFeatures
+        ?.filterIsInstance(FoldingFeature::class.java)?.firstOrNull()
+
+      foldingFeature?.also {
+        val feature = DisplayFeature(
+          state = it.state,
+          isSeparating = it.isSeparating,
+          bounds = Rect(
+            top = it.bounds.top,
+            bottom = it.bounds.bottom,
+            left = it.bounds.left,
+            right = it.bounds.right
+          )
+        )
+        val json = Gson().toJson(feature)
+        windowLayoutInfoEventSink?.success(json)
+      } ?: run {
+        windowLayoutInfoEventSink?.success(null)
+      }
     }
   }
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "multi_screen_layout")
     channel.setMethodCallHandler(this);
+    init(flutterPluginBinding.binaryMessenger)
   }
 
   // This static function is optional and equivalent to onAttachedToEngine. It supports the old
@@ -78,7 +100,21 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, ActivityAware 
       val channel = MethodChannel(registrar.messenger(), "multi_screen_layout")
       val plugin = MultiScreenLayoutPlugin()
       channel.setMethodCallHandler(plugin)
+      plugin.init(registrar.messenger())
     }
+  }
+
+  private fun init(messenger: BinaryMessenger) {
+    val eventChannel = EventChannel(messenger, "multi_screen_layout_layout_state_change")
+    eventChannel.setStreamHandler(this)
+  }
+
+  override fun onListen(o: Any?, eventSink: EventSink) {
+    windowLayoutInfoEventSink = eventSink
+  }
+
+  override fun onCancel(o: Any?) {
+    windowLayoutInfoEventSink = null
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
