@@ -25,17 +25,17 @@ class PlatformInfoModel {
 }
 
 class PlatformDisplayFeature {
-  final int type;
+  final int state;
   final IntRect bounds;
 
   PlatformDisplayFeature({
-    required this.type,
+    required this.state,
     required this.bounds,
   });
 
   factory PlatformDisplayFeature.fromJson(Map<String, dynamic> json) =>
       PlatformDisplayFeature(
-        type: json["type"],
+        state: json["state"],
         bounds: IntRect.fromJson(
           json["bounds"],
         ),

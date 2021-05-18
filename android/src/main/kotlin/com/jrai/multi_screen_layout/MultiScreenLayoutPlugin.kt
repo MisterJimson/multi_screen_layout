@@ -329,7 +329,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
                     ?.filterIsInstance(FoldingFeature::class.java)?.map
             { 
               DisplayFeature(
-                      type = it.type,
+                      state = it.state,
                       bounds = Rect(
                               top = it.bounds.top, 
                               bottom = it.bounds.bottom, 
@@ -363,6 +363,6 @@ data class InfoModel(
         @SerializedName("displayFeatures") val displayFeatures: List<DisplayFeature>
 )
 data class DisplayFeature(
-        @SerializedName("type") val type: Int,
+        @SerializedName("state") val state: Int,
         @SerializedName("bounds") val bounds: Rect<Int>
 )
