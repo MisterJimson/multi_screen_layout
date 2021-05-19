@@ -4,79 +4,68 @@ import 'package:multi_screen_layout/src/util.dart';
 
 /// Contains all multi screen data available
 class MultiScreenLayoutInfoModel {
-  /// Folding state of the device
-  final FoldingState foldingState;
-
-  /// Fold direction
-  final FoldDirection foldDirection;
+  final PlatformDisplayFeature platformDisplayFeature;
 
   /// Information from the Surface Duo SDK
   final SurfaceDuoInfoModel surfaceDuoInfoModel;
 
+  /// Folding state of the device
+  late final FoldingState foldingState;
+
+  /// Fold direction
+  late final FoldDirection foldDirection;
+
   /// Based on the data provided by the system, should the UI span multiple
   /// screens
-  final bool shouldDisplayAcrossScreens;
+  late final bool shouldDisplayAcrossScreens;
 
   MultiScreenLayoutInfoModel({
-    required this.foldingState,
+    required this.platformDisplayFeature,
     required this.surfaceDuoInfoModel,
-    required this.foldDirection,
-    required this.shouldDisplayAcrossScreens,
-  });
-
-  MultiScreenLayoutInfoModel copyWith({
-    FoldingState? foldingState,
-    FoldDirection? foldDirection,
-    SurfaceDuoInfoModel? surfaceDuoInfoModel,
-    bool? shouldDisplayAcrossScreens,
   }) {
-    return MultiScreenLayoutInfoModel(
-      foldingState: foldingState ?? this.foldingState,
-      foldDirection: foldDirection ?? this.foldDirection,
-      surfaceDuoInfoModel: surfaceDuoInfoModel ?? this.surfaceDuoInfoModel,
-      shouldDisplayAcrossScreens:
-          shouldDisplayAcrossScreens ?? this.shouldDisplayAcrossScreens,
-    );
-  }
-
-  //todo FoldDirection for Surface Duo
-  factory MultiScreenLayoutInfoModel.fromPlatform(PlatformInfoModel info) {
-    var hasFoldingDisplayFeature = info.displayFeatures.length == 1;
-
     FoldDirection foldDirection;
-    if (hasFoldingDisplayFeature) {
-      foldDirection = info.displayFeatures.first.bounds.top == 0 ||
-              info.displayFeatures.first.bounds.bottom == 0
-          ? FoldDirection.horizontal
-          : FoldDirection.vertical;
+    if (platformDisplayFeature.bounds.top == 0 ||
+        platformDisplayFeature.bounds.bottom == 0) {
+      foldDirection = FoldDirection.horizontal;
+    } else if (platformDisplayFeature.bounds.left == 0 ||
+        platformDisplayFeature.bounds.right == 0) {
+      foldDirection = FoldDirection.vertical;
     } else {
       foldDirection = FoldDirection.none;
     }
 
     bool shouldDisplayAcrossScreens;
-    if (hasFoldingDisplayFeature) {
-      shouldDisplayAcrossScreens = info.displayFeatures.first.isSeparating;
-    } else if (info.surfaceDuoInfoModel.isSpanned) {
+    if (platformDisplayFeature.isSeparating || surfaceDuoInfoModel.isSpanned) {
       shouldDisplayAcrossScreens = true;
     } else {
       shouldDisplayAcrossScreens = false;
     }
 
+    this.foldingState = foldingStateFromInt(platformDisplayFeature.state);
+    this.foldDirection = foldDirection;
+    this.shouldDisplayAcrossScreens = shouldDisplayAcrossScreens;
+  }
+
+  MultiScreenLayoutInfoModel copyWith({
+    PlatformDisplayFeature? platformDisplayFeature,
+    SurfaceDuoInfoModel? surfaceDuoInfoModel,
+  }) {
     return MultiScreenLayoutInfoModel(
-      foldingState: hasFoldingDisplayFeature
-          ? foldingStateFromInt(info.displayFeatures.first.state)
-          : FoldingState.unknown,
-      foldDirection: foldDirection,
-      surfaceDuoInfoModel: info.surfaceDuoInfoModel,
-      shouldDisplayAcrossScreens: shouldDisplayAcrossScreens,
+      platformDisplayFeature:
+          platformDisplayFeature ?? this.platformDisplayFeature,
+      surfaceDuoInfoModel: surfaceDuoInfoModel ?? this.surfaceDuoInfoModel,
     );
   }
 
+  factory MultiScreenLayoutInfoModel.fromPlatform(PlatformInfoModel infoModel) {
+    return MultiScreenLayoutInfoModel(
+      platformDisplayFeature: infoModel.displayFeature,
+      surfaceDuoInfoModel: infoModel.surfaceDuoInfoModel,
+    );
+  }
   factory MultiScreenLayoutInfoModel.unknown() => MultiScreenLayoutInfoModel(
         surfaceDuoInfoModel: SurfaceDuoInfoModel.unknown(),
-        foldDirection: FoldDirection.none,
-        foldingState: FoldingState.unknown,
-        shouldDisplayAcrossScreens: false,
+        platformDisplayFeature: PlatformDisplayFeature.unknown(),
       );
 }
 

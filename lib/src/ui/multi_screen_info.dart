@@ -42,9 +42,7 @@ class _MultiScreenInfoState extends State<MultiScreenInfo>
       stream: MultiScreenPlatformHandler.onFoldingDisplayFeatureChanged,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          // todo align logic with MultiScreenLayoutInfoModel.fromPlatform
-          info = info.copyWith(
-              shouldDisplayAcrossScreens: snapshot.data!.isSeparating);
+          info = info.copyWith(platformDisplayFeature: snapshot.data);
         }
         return widget.builder(info);
       },

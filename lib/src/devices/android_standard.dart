@@ -2,23 +2,28 @@ import 'package:multi_screen_layout/src/devices/surface_duo.dart';
 
 class PlatformInfoModel {
   final SurfaceDuoInfoModel surfaceDuoInfoModel;
-  final List<PlatformDisplayFeature> displayFeatures;
+  final PlatformDisplayFeature displayFeature;
 
   PlatformInfoModel({
     required this.surfaceDuoInfoModel,
-    required this.displayFeatures,
+    required this.displayFeature,
   });
 
   factory PlatformInfoModel.fromJson(Map<String, dynamic> json) =>
       PlatformInfoModel(
-          surfaceDuoInfoModel: json["surfaceDuoInfoModel"] != null
-              ? SurfaceDuoInfoModel.fromJson(
-                  json["surfaceDuoInfoModel"],
-                )
-              : SurfaceDuoInfoModel.unknown(),
-          displayFeatures: (json["displayFeatures"] as Iterable)
-              .map((e) => PlatformDisplayFeature.fromJson(e))
-              .toList());
+        surfaceDuoInfoModel: json["surfaceDuoInfoModel"] != null
+            ? SurfaceDuoInfoModel.fromJson(
+                json["surfaceDuoInfoModel"],
+              )
+            : SurfaceDuoInfoModel.unknown(),
+        displayFeature: (json["displayFeatures"] as Iterable)
+            .map((e) => PlatformDisplayFeature.fromJson(e))
+            .toList()
+            .firstWhere(
+              (x) => true,
+              orElse: () => PlatformDisplayFeature.unknown(),
+            ),
+      );
 }
 
 class PlatformDisplayFeature {
