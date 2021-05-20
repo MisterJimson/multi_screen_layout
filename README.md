@@ -10,6 +10,12 @@ A collection of Widgets that make multi screen user experiences easy to build
 - [ ] LG Wing
 
 If you know of other devices that could support multi screen layouts, please submit a PR and add them to this list.
+
+## Testing
+For testing without access to these physical devices you can use some specific emulators.
+- 6.7 Horizontal Fold-in Emulator available in Android Studio
+- Surface Duo Emulator available [here](https://www.microsoft.com/en-us/download/details.aspx?id=100847).
+
 ## Layouts
 ### TwoPageLayout
 Displays two Widgets, one per screen. 
