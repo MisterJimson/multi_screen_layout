@@ -28,7 +28,7 @@ class TwoPageLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiScreenInfo(
       builder: (info) {
-        if (info.shouldDisplayAcrossScreens) {
+        if (info.shouldDisplayAcrossScreens()) {
           if (info.foldDirection == FoldDirection.horizontal ||
               info.foldDirection == FoldDirection.none) {
             return Row(

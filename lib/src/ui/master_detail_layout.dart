@@ -54,7 +54,7 @@ class MasterDetailLayout extends StatelessWidget {
                 secondChild: detail,
               ),
             ),
-            if (!(info.shouldDisplayAcrossScreens) && isSelected)
+            if (!(info.shouldDisplayAcrossScreens()) && isSelected)
               MaterialPage(
                 key: Key('detail') as LocalKey?,
                 child: detail,

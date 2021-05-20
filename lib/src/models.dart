@@ -16,10 +16,6 @@ class MultiScreenLayoutInfoModel {
   /// Fold direction
   late final FoldDirection foldDirection;
 
-  /// Based on the data provided by the system, should the UI span multiple
-  /// screens
-  late final bool shouldDisplayAcrossScreens;
-
   MultiScreenLayoutInfoModel({
     required this.platformDisplayFeature,
     required this.surfaceDuoInfoModel,
@@ -35,12 +31,24 @@ class MultiScreenLayoutInfoModel {
       foldDirection = FoldDirection.none;
     }
 
-    bool shouldDisplayAcrossScreens =
-        platformDisplayFeature.isSeparating || surfaceDuoInfoModel.isSpanned;
-
     this.foldingState = foldingStateFromInt(platformDisplayFeature.state);
     this.foldDirection = foldDirection;
-    this.shouldDisplayAcrossScreens = shouldDisplayAcrossScreens;
+  }
+
+  /// Based on the data provided by the system, should the UI span multiple
+  /// screens. Optionally pass in a list of [MultiScreenType]s to opt specific
+  /// device types of displaying across screens.
+  bool shouldDisplayAcrossScreens([List<MultiScreenType>? disableFor]) {
+    if (disableFor == null) {
+      return platformDisplayFeature.isSeparating ||
+          surfaceDuoInfoModel.isSpanned;
+    } else {
+      var androidStandardEnabled =
+          !disableFor.contains(MultiScreenType.androidStandard);
+      var surfaceDuoEnabled = !disableFor.contains(MultiScreenType.surfaceDuo);
+      return (platformDisplayFeature.isSeparating && androidStandardEnabled) ||
+          (surfaceDuoInfoModel.isSpanned && surfaceDuoEnabled);
+    }
   }
 
   MultiScreenLayoutInfoModel copyWith({
