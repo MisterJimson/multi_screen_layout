@@ -4,6 +4,7 @@ import 'package:multi_screen_layout/src/util.dart';
 
 /// Contains all multi screen data available
 class MultiScreenLayoutInfoModel {
+  /// The Platform Information about the folding display feature
   final PlatformDisplayFeature platformDisplayFeature;
 
   /// Information from the Surface Duo SDK
@@ -34,12 +35,8 @@ class MultiScreenLayoutInfoModel {
       foldDirection = FoldDirection.none;
     }
 
-    bool shouldDisplayAcrossScreens;
-    if (platformDisplayFeature.isSeparating || surfaceDuoInfoModel.isSpanned) {
-      shouldDisplayAcrossScreens = true;
-    } else {
-      shouldDisplayAcrossScreens = false;
-    }
+    bool shouldDisplayAcrossScreens =
+        platformDisplayFeature.isSeparating || surfaceDuoInfoModel.isSpanned;
 
     this.foldingState = foldingStateFromInt(platformDisplayFeature.state);
     this.foldDirection = foldDirection;
