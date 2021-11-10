@@ -41,7 +41,7 @@ class Master extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
-          FlatButton(
+          TextButton(
             child: Text(
               'CLEAR SELECTION',
               style: TextStyle(color: Colors.white),
