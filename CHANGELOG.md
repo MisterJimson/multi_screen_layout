@@ -1,3 +1,12 @@
+## 3.0.0
+ 
+* Various Android version updates
+* Surface Duo 2 added to supported device list
+* Breaking change: Android minSdkVersion is now 21
+* Breaking change: Due to AndroidX WindowManager updates: 
+  * PlatformInfoModel, PlatformDisplayFeature, MultiScreenPlatformHandler, and MultiScreenLayoutInfoModel have breaking change
+  * DevicePosture has been renamed FoldingState
+
 ## 2.0.0
 
 * Null safety migration
