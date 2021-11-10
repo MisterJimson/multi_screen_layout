@@ -6,19 +6,19 @@ import 'package:flutter/services.dart';
 import 'package:multi_screen_layout/src/devices/android_standard.dart';
 import 'package:multi_screen_layout/src/devices/surface_duo.dart';
 import 'package:multi_screen_layout/src/models.dart';
-import 'package:multi_screen_layout/src/util.dart';
 
 const _methodChannel = const MethodChannel('multi_screen_layout');
+
 const _devicePostureEventChannel =
-    const EventChannel('multi_screen_layout_device_posture');
+    const EventChannel('multi_screen_layout_layout_state_change');
 
 /// Provides access to the platform to get multi screen information
 class MultiScreenPlatformHandler {
   MultiScreenPlatformHandler._();
 
   /// Directly listen to changes in device posture
-  static Stream<DevicePosture> onDevicePostureChanged =
-      _setupOnDevicePostureChanged();
+  static Stream<PlatformDisplayFeature> onFoldingDisplayFeatureChanged =
+      _setupOnFoldingDisplayFeatureChanged();
 
   /// Provides access to SurfaceDuo specific information
   static SurfaceDuoPlatformHandler surfaceDuo = SurfaceDuoPlatformHandler._();
@@ -35,18 +35,20 @@ class MultiScreenPlatformHandler {
     }
   }
 
-  static Stream<DevicePosture> _setupOnDevicePostureChanged() {
+  static Stream<PlatformDisplayFeature> _setupOnFoldingDisplayFeatureChanged() {
     if (!Platform.isAndroid)
-      return _unsupportedPlatformDevicePostureStream().asBroadcastStream();
+      return _unsupportedOnFoldingDisplayFeatureChanged().asBroadcastStream();
 
-    return _devicePostureEventChannel
-        .receiveBroadcastStream()
-        .map((value) => devicePostureFromInt((value as int)));
+    return _devicePostureEventChannel.receiveBroadcastStream().map((value) {
+      return value == null
+          ? PlatformDisplayFeature.unknown()
+          : PlatformDisplayFeature.fromJson(jsonDecode(value));
+    });
   }
 
-  static Stream<DevicePosture>
-      _unsupportedPlatformDevicePostureStream() async* {
-    yield DevicePosture.unknown;
+  static Stream<PlatformDisplayFeature>
+      _unsupportedOnFoldingDisplayFeatureChanged() async* {
+    yield PlatformDisplayFeature.unknown();
   }
 }
 

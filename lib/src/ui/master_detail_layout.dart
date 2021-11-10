@@ -40,13 +40,6 @@ class MasterDetailLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiScreenInfo(
       builder: (info) {
-        var displaySecondPageForAndroidStandard =
-            info.posture == DevicePosture.halfOpened &&
-                !disableFor.contains(MultiScreenType.androidStandard);
-        var displaySecondPageForSurfaceDuo =
-            info.surfaceDuoInfoModel.isSpanned &&
-                !disableFor.contains(MultiScreenType.surfaceDuo);
-
         return Navigator(
           onPopPage: (route, result) {
             if (route.isFirst) Navigator.maybePop(context);
@@ -61,9 +54,7 @@ class MasterDetailLayout extends StatelessWidget {
                 secondChild: detail,
               ),
             ),
-            if (!(displaySecondPageForAndroidStandard ||
-                    displaySecondPageForSurfaceDuo) &&
-                isSelected)
+            if (!(info.shouldDisplayAcrossScreens()) && isSelected)
               MaterialPage(
                 key: Key('detail') as LocalKey?,
                 child: detail,

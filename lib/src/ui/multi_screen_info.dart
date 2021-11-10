@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:multi_screen_layout/src/devices/android_standard.dart';
 import 'package:multi_screen_layout/src/models.dart';
 import 'package:multi_screen_layout/src/platform_handler.dart';
 
@@ -37,11 +38,11 @@ class _MultiScreenInfoState extends State<MultiScreenInfo>
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<DevicePosture>(
-      stream: MultiScreenPlatformHandler.onDevicePostureChanged,
+    return StreamBuilder<PlatformDisplayFeature>(
+      stream: MultiScreenPlatformHandler.onFoldingDisplayFeatureChanged,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          info = info.copyWith(posture: snapshot.data);
+          info = info.copyWith(platformDisplayFeature: snapshot.data);
         }
         return widget.builder(info);
       },
