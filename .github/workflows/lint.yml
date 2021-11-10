@@ -15,4 +15,5 @@ jobs:
         with:
           flutter-version: '2.5.3'
           channel: 'stable'
+      - run: flutter pub get
       - run: flutter analyze
