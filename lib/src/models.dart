@@ -37,7 +37,7 @@ class MultiScreenLayoutInfoModel {
 
   /// Based on the data provided by the system, should the UI span multiple
   /// screens. Optionally pass in a list of [MultiScreenType]s to opt specific
-  /// device types of displaying across screens.
+  /// device types out of displaying across screens.
   bool shouldDisplayAcrossScreens([List<MultiScreenType>? disableFor]) {
     if (disableFor == null) {
       return platformDisplayFeature.isSeparating ||
