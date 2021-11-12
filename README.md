@@ -14,16 +14,18 @@ If you know of other devices that could support multi screen layouts, please sub
 
 ## Testing
 For testing without access to these physical devices you can use some specific emulators.
-- 6.7 Horizontal Fold-in Emulator available in Android Studio
+- 6.7 Horizontal Fold-in emulator available in Android Studio
+- 7.6 Fold-in with outer display emulator available in Android Studio
+- 8 Fold-out emulator available in Android Studio
 - Surface Duo Emulator available [here](https://www.microsoft.com/en-us/download/details.aspx?id=100847).
 
 ## Layouts
 ### TwoPageLayout
 Displays two Widgets, one per screen. 
 
-On a dual screen device when the app is being spanned across two screens, displays both widgets, one per screen. This is designed to be used to accomplish Two Page, Dual View, and Companion Pane [dual screen app patterns from Microsoft](https://docs.microsoft.com/en-us/dual-screen/introduction#dual-screen-app-patterns).
+On a Microsoft dual screen device when the app is being spanned across two screens, TwoPageLayout displays both widgets, one per screen. This is designed to help you build Two Page, Dual View, and Companion Pane [dual screen app patterns from Microsoft](https://docs.microsoft.com/en-us/dual-screen/introduction#dual-screen-app-patterns).
 
-On a folding screen device when the screen is half opened the screen is treated as a dual screen device. This is designed to be used to Accomplish [Flex Mode](https://developer.samsung.com/galaxy-z/flex-mode.html) user experiences.
+On a folding screen device when the display could be utilized to split content areas, TwoPageLayout displays both widgets, one per content area. This is designed to help you build [Flex Mode](https://developer.samsung.com/galaxy-z/flex-mode.html) user experiences. You can read more about how when to split content is decided in the [AndroidX WindowManager documentation](https://developer.android.com/reference/androidx/window/layout/FoldingFeature#isSeparating()).
 
 On a single screen device, or when the app is only running on a single screen, only `child` will be displayed.
 
