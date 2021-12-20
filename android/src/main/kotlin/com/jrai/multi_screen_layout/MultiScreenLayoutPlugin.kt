@@ -28,7 +28,6 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
-import java.util.concurrent.Executor
 
 class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler, ActivityAware {
   /// The MethodChannel that will the communication between Flutter and native Android
@@ -36,10 +35,10 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
   /// when the Flutter Engine is detached from the Activity
   private lateinit var channel: MethodChannel
-  private var activity: Activity? = null;
+  private var activity: Activity? = null
 
   // Surface Duo SDK
-  private val HINGE_ANGLE_SENSOR_NAME = "Hinge Angle"
+  private val mHingeAngleSensorName = "Hinge Angle"
   private var mSensorsSetup: Boolean = false
   private var mSensorManager: SensorManager? = null
   private var mHingeAngleSensor: Sensor? = null
@@ -87,7 +86,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "multi_screen_layout")
-    channel.setMethodCallHandler(this);
+    channel.setMethodCallHandler(this)
     init(flutterPluginBinding.binaryMessenger)
   }
 
@@ -133,7 +132,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
           result.success(false)
           return
         }
-        val isAppSpanned = isAppSpanned();
+        val isAppSpanned = isAppSpanned()
         if (isAppSpanned != null && isAppSpanned) {
           result.success(true)
         } else {
@@ -144,7 +143,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
           result.success(null)
           return
         }
-        val nonFunctionalBounds = getNonFunctionalBounds();
+        val nonFunctionalBounds = getNonFunctionalBounds()
         if (nonFunctionalBounds == null) {
           result.success(null)
         } else {
@@ -170,7 +169,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
         if (!mSensorsSetup) {
           setupSensors()
         }
-        val infoModel = getSurfaceDuoInfoModel();
+        val infoModel = getSurfaceDuoInfoModel()
         if (infoModel == null) {
           result.success(null)
         } else {
@@ -196,13 +195,13 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
 
 
   private fun setupWindowManager(binding: ActivityPluginBinding) {
-    windowInfoTracker = WindowInfoTrackerCallbackAdapter(WindowInfoTracker.getOrCreate(binding.activity));
+    windowInfoTracker = WindowInfoTrackerCallbackAdapter(WindowInfoTracker.getOrCreate(binding.activity))
     windowInfoTracker!!.addWindowLayoutInfoListener(
-      binding.activity, Runnable::run, layoutStateChangeCallback);
+      binding.activity, Runnable::run, layoutStateChangeCallback)
   }
 
   private fun teardownWindowManager() {
-    windowInfoTracker!!.removeWindowLayoutInfoListener(layoutStateChangeCallback);
+    windowInfoTracker!!.removeWindowLayoutInfoListener(layoutStateChangeCallback)
     windowInfoTracker = null
   }
 
@@ -231,7 +230,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
   }
 
   private fun isDualScreenDevice(): Boolean? {
-    if (activity == null) return null;
+    if (activity == null) return null
 
     val feature = "com.microsoft.device.display.displaymask"
     val pm = activity!!.packageManager
@@ -239,12 +238,12 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
   }
 
   private fun isAppSpanned(): Boolean? {
-    if (activity == null) return null;
+    if (activity == null) return null
 
     val displayMask = DisplayMask.fromResourcesRectApproximation(activity)
     val boundings = displayMask.boundingRects
 
-    if (boundings.isEmpty()) return false;
+    if (boundings.isEmpty()) return false
 
     val first = boundings[0]
     val rootView = activity!!.window.decorView.rootView
@@ -255,12 +254,12 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
   }
 
   private fun getNonFunctionalBounds(): Rect<Float>? {
-    if (activity == null) return null;
+    if (activity == null) return null
 
     val displayMask = DisplayMask.fromResourcesRectApproximation(activity)
     val boundings = displayMask.boundingRects
 
-    if (boundings.isEmpty()) return null;
+    if (boundings.isEmpty()) return null
 
     val first = boundings[0]
 
@@ -279,7 +278,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
     val sensorList: List<Sensor> = mSensorManager!!.getSensorList(Sensor.TYPE_ALL)
 
     for (sensor in sensorList) {
-      if (sensor.name.contains(HINGE_ANGLE_SENSOR_NAME)) {
+      if (sensor.name.contains(mHingeAngleSensorName)) {
         mHingeAngleSensor = sensor
         break
       }
@@ -306,7 +305,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
   }
 
   private fun getSurfaceDuoInfoModel() : SurfaceDuoInfoModel? {
-    if (activity == null) return null;
+    if (activity == null) return null
 
     val feature = "com.microsoft.device.display.displaymask"
     val pm = activity!!.packageManager
@@ -316,7 +315,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
     val displayMask = DisplayMask.fromResourcesRectApproximation(activity)
     val boundings = displayMask.boundingRects
 
-    var isSpanned = false;
+    var isSpanned = false
     var nonFunctionalBounds: Rect<Float>? = null
 
     if (boundings.isNotEmpty()) {
@@ -345,9 +344,9 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
   }
 
   private fun getInfoModel() : InfoModel? {
-    if (activity == null) return null;
+    if (activity == null) return null
 
-    val surfaceDuoInfoModel = getSurfaceDuoInfoModel();
+    val surfaceDuoInfoModel = getSurfaceDuoInfoModel()
 
     return InfoModel(
             surfaceDuoInfoModel = surfaceDuoInfoModel,
