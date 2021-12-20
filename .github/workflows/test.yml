@@ -1,4 +1,4 @@
-name: Lint
+name: Test
 on:
   push:
     branches:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   lint:
-    name: Lint
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -16,4 +16,4 @@ jobs:
           flutter-version: '2.8.1'
           channel: 'stable'
       - run: flutter pub get
-      - run: flutter analyze
+      - run: flutter test

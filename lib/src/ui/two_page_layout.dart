@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:multi_screen_layout/multi_screen_layout.dart';
-import 'package:multi_screen_layout/src/ui/multi_screen_info.dart';
 
 /// Always displays [child], [secondChild] is displayed if the app is spanned
 /// across 2 displays.
