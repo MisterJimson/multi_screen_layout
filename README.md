@@ -16,7 +16,7 @@ If you know of other devices that could support multi screen layouts, please sub
 In your pubspec.yaml
 ```yaml
 dependencies:
-  multi_screen_layout: ^3.0.0
+  multi_screen_layout: ^3.1.0
 ```
 In your app build.gradle
 ```
