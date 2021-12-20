@@ -12,6 +12,9 @@ const _methodChannel = const MethodChannel('multi_screen_layout');
 const _devicePostureEventChannel =
     const EventChannel('multi_screen_layout_layout_state_change');
 
+const _surfaceDuoHingeAngleChannel =
+    const EventChannel('multi_screen_layout_surface_duo_hinge_angle');
+
 bool _isAndroid = defaultTargetPlatform == TargetPlatform.android;
 
 /// Provides access to the platform to get multi screen information
@@ -88,5 +91,26 @@ class SurfaceDuoPlatformHandler {
     } else {
       return NonFunctionalBounds.fromJson(jsonDecode(result));
     }
+  }
+
+  /// Directly listen to changes in Surface Duo hindge angle
+  static Stream<double> onHingeAngleChanged = _setupOnHingeAngleChanged();
+
+  static Stream<double> _setupOnHingeAngleChanged() {
+    if (!_isAndroid)
+      return _unsupportedOnHingeAngleChanged().asBroadcastStream();
+
+    return _surfaceDuoHingeAngleChannel.receiveBroadcastStream().map((value) {
+      if (value is double) {
+        return value;
+      } else {
+        throw Exception(
+            'Surface Duo Hinge Angle Event Channel emitted non-double value: $value');
+      }
+    });
+  }
+
+  static Stream<double> _unsupportedOnHingeAngleChanged() async* {
+    yield 0.0;
   }
 }

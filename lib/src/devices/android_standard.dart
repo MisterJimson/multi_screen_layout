@@ -27,7 +27,7 @@ class PlatformInfoModel {
 }
 
 class PlatformDisplayFeature {
-  final int state;
+  final String state;
   final bool isSeparating;
   final IntRect bounds;
 
@@ -47,7 +47,7 @@ class PlatformDisplayFeature {
       );
 
   factory PlatformDisplayFeature.unknown() => PlatformDisplayFeature(
-        state: 0,
+        state: 'Unknown',
         isSeparating: false,
         bounds: IntRect.unknown(),
       );

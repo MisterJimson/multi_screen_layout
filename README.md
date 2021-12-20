@@ -21,7 +21,8 @@ dependencies:
 In your app build.gradle
 ```
 dependencies { 
-    implementation "androidx.window:window:1.0.0-alpha06"
+    implementation "androidx.window:window:1.0.0-rc01"
+    implementation 'androidx.window:window-java:1.0.0-rc01'
 }
 ```
 ## Testing
