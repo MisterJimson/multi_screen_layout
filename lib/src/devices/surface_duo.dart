@@ -33,6 +33,20 @@ class SurfaceDuoInfoModel {
               )
             : NonFunctionalBounds.none(),
       );
+
+  SurfaceDuoInfoModel copyWith({
+    bool? isDualScreenDevice,
+    bool? isSpanned,
+    double? hingeAngle,
+    NonFunctionalBounds? nonFunctionalBounds,
+  }) {
+    return SurfaceDuoInfoModel(
+      isDualScreenDevice: isDualScreenDevice ?? this.isDualScreenDevice,
+      isSpanned: isSpanned ?? this.isSpanned,
+      hingeAngle: hingeAngle ?? this.hingeAngle,
+      nonFunctionalBounds: nonFunctionalBounds ?? this.nonFunctionalBounds,
+    );
+  }
 }
 
 class NonFunctionalBounds {

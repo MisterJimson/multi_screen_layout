@@ -44,7 +44,18 @@ class _MultiScreenInfoState extends State<MultiScreenInfo>
         if (snapshot.hasData) {
           info = info.copyWith(platformDisplayFeature: snapshot.data);
         }
-        return widget.builder(info);
+        return StreamBuilder<double>(
+          stream: SurfaceDuoPlatformHandler.onHingeAngleChanged,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              info = info.copyWith(
+                  surfaceDuoInfoModel: info.surfaceDuoInfoModel.copyWith(
+                hingeAngle: snapshot.data,
+              ));
+            }
+            return widget.builder(info);
+          },
+        );
       },
     );
   }

@@ -32,6 +32,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, ActivityAware 
     private var activity: Activity? = null
 
     // Surface Duo SDK
+    private var surfaceDuoHingeAngleEventChannelHandler: SurfaceDuoHingeAngleEventChannelHandler? = null
     private val mHingeAngleSensorName = "Hinge Angle"
     private var mSensorsSetup: Boolean = false
     private var mSensorManager: SensorManager? = null
@@ -105,6 +106,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, ActivityAware 
 
     private fun init(messenger: BinaryMessenger) {
         windowLayoutInfoEventChannelHandler = WindowLayoutInfoEventChannelHandler(messenger)
+        surfaceDuoHingeAngleEventChannelHandler = SurfaceDuoHingeAngleEventChannelHandler(messenger)
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
@@ -260,7 +262,6 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, ActivityAware 
         )
     }
 
-    //todo what to do when SensorManager is null?
     private fun setupSensors() {
         mSensorManager = activity!!.getSystemService(SENSOR_SERVICE) as SensorManager?
         val sensorList: List<Sensor> = mSensorManager!!.getSensorList(Sensor.TYPE_ALL)
@@ -276,6 +277,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, ActivityAware 
             override fun onSensorChanged(event: SensorEvent) {
                 if (event.sensor === mHingeAngleSensor) {
                     mCurrentHingeAngle = event.values[0]
+                    surfaceDuoHingeAngleEventChannelHandler?.sink?.success(mCurrentHingeAngle)
                 }
             }
 
