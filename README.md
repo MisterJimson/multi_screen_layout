@@ -12,6 +12,18 @@ A collection of Widgets that make multi screen user experiences easy to build
 
 If you know of other devices that could support multi screen layouts, please submit a PR and add them to this list.
 
+## Install
+In your pubspec.yaml
+```yaml
+dependencies:
+  multi_screen_layout: ^3.0.0
+```
+In your app build.gradle
+```
+dependencies { 
+    implementation "androidx.window:window:1.0.0-alpha06"
+}
+```
 ## Testing
 For testing without access to these physical devices you can use some specific emulators.
 - 6.7 Horizontal Fold-in emulator available in Android Studio
