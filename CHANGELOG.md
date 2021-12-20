@@ -1,3 +1,8 @@
+## 3.1.0
+
+* Updated AndroidX Window Manager to 1.0.0-rc01
+* MultiScreenInfo widget now rebuilds in real time when the hinge angle on the Surface Duo changes
+
 ## 3.0.0
  
 * Various Android version updates
