@@ -21,19 +21,13 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugin.common.EventChannel
-import io.flutter.plugin.common.EventChannel.EventSink
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
 
-class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler, ActivityAware {
-  /// The MethodChannel that will the communication between Flutter and native Android
-  ///
-  /// This local reference serves to register the plugin with the Flutter Engine and unregister it
-  /// when the Flutter Engine is detached from the Activity
+class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
   private lateinit var channel: MethodChannel
   private var activity: Activity? = null
 
@@ -46,11 +40,11 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
   private var mCurrentHingeAngle: Float = 0.0f
 
   // AndroidX Window Manager
+  private var windowLayoutInfoEventChannelHandler: WindowLayoutInfoEventChannelHandler? = null
   private var windowInfoTracker: WindowInfoTrackerCallbackAdapter? = null
   private val layoutStateChangeCallback = LayoutStateChangeCallback()
   private var windowLayoutInfo: WindowLayoutInfo? = null
-  private val handler = Handler(Looper.getMainLooper())
-  private var windowLayoutInfoEventSink: EventSink? = null
+  private val mainThreadHandler = Handler(Looper.getMainLooper())
 
   inner class LayoutStateChangeCallback : Consumer<WindowLayoutInfo> {
     override fun accept(newLayoutInfo: WindowLayoutInfo) {
@@ -72,13 +66,13 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
         )
         val json = Gson().toJson(feature)
 
-        handler.post {
-          windowLayoutInfoEventSink?.success(json)
+        mainThreadHandler.post {
+          windowLayoutInfoEventChannelHandler?.sink?.success(json)
         }
 
       } ?: run {
-        handler.post {
-          windowLayoutInfoEventSink?.success(null)
+        mainThreadHandler.post {
+          windowLayoutInfoEventChannelHandler?.sink?.success(null)
         }
       }
     }
@@ -110,16 +104,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
   }
 
   private fun init(messenger: BinaryMessenger) {
-    val eventChannel = EventChannel(messenger, "multi_screen_layout_layout_state_change")
-    eventChannel.setStreamHandler(this)
-  }
-
-  override fun onListen(o: Any?, eventSink: EventSink) {
-    windowLayoutInfoEventSink = eventSink
-  }
-
-  override fun onCancel(o: Any?) {
-    windowLayoutInfoEventSink = null
+    windowLayoutInfoEventChannelHandler = WindowLayoutInfoEventChannelHandler(messenger)
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
