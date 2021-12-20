@@ -10,9 +10,10 @@ import android.os.Handler
 import android.os.Looper
 import androidx.annotation.NonNull
 import androidx.core.util.Consumer
-import androidx.window.FoldingFeature
-import androidx.window.WindowLayoutInfo
-import androidx.window.WindowManager
+import androidx.window.java.layout.WindowInfoTrackerCallbackAdapter
+import androidx.window.layout.FoldingFeature
+import androidx.window.layout.WindowInfoTracker
+import androidx.window.layout.WindowLayoutInfo
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import com.microsoft.device.display.DisplayMask
@@ -46,12 +47,11 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
   private var mCurrentHingeAngle: Float = 0.0f
 
   // AndroidX Window Manager
-  private var windowManager: WindowManager? = null
+  private var windowInfoTracker: WindowInfoTrackerCallbackAdapter? = null
   private val layoutStateChangeCallback = LayoutStateChangeCallback()
   private var windowLayoutInfo: WindowLayoutInfo? = null
   private val handler = Handler(Looper.getMainLooper())
-  private val mainThreadExecutor = Executor { r: Runnable -> handler.post(r) }
-  private var windowLayoutInfoEventSink: EventChannel.EventSink? = null
+  private var windowLayoutInfoEventSink: EventSink? = null
 
   inner class LayoutStateChangeCallback : Consumer<WindowLayoutInfo> {
     override fun accept(newLayoutInfo: WindowLayoutInfo) {
@@ -62,7 +62,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
 
       foldingFeature?.also {
         val feature = DisplayFeature(
-          state = it.state,
+          state = it.state.toString(),
           isSeparating = it.isSeparating,
           bounds = Rect(
             top = it.bounds.top,
@@ -72,9 +72,15 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
           )
         )
         val json = Gson().toJson(feature)
-        windowLayoutInfoEventSink?.success(json)
+
+        handler.post {
+          windowLayoutInfoEventSink?.success(json)
+        }
+
       } ?: run {
-        windowLayoutInfoEventSink?.success(null)
+        handler.post {
+          windowLayoutInfoEventSink?.success(null)
+        }
       }
     }
   }
@@ -188,14 +194,16 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
     }
   }
 
+
   private fun setupWindowManager(binding: ActivityPluginBinding) {
-    windowManager = WindowManager(binding.activity)
-    windowManager?.registerLayoutChangeCallback(mainThreadExecutor, layoutStateChangeCallback)
+    windowInfoTracker = WindowInfoTrackerCallbackAdapter(WindowInfoTracker.getOrCreate(binding.activity));
+    windowInfoTracker!!.addWindowLayoutInfoListener(
+      binding.activity, Runnable::run, layoutStateChangeCallback);
   }
 
   private fun teardownWindowManager() {
-    windowManager?.unregisterLayoutChangeCallback(layoutStateChangeCallback)
-    windowManager = null
+    windowInfoTracker!!.removeWindowLayoutInfoListener(layoutStateChangeCallback);
+    windowInfoTracker = null
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
@@ -337,7 +345,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
   }
 
   private fun getInfoModel() : InfoModel? {
-    if (activity == null || windowManager == null) return null;
+    if (activity == null) return null;
 
     val surfaceDuoInfoModel = getSurfaceDuoInfoModel();
 
@@ -347,7 +355,7 @@ class MultiScreenLayoutPlugin : FlutterPlugin, MethodCallHandler, EventChannel.S
                     ?.filterIsInstance(FoldingFeature::class.java)?.map
             { 
               DisplayFeature(
-                      state = it.state,
+                      state = it.state.toString(),
                       isSeparating = it.isSeparating,
                       bounds = Rect(
                               top = it.bounds.top, 
@@ -381,7 +389,7 @@ data class InfoModel(
         @SerializedName("displayFeatures") val displayFeatures: List<DisplayFeature>
 )
 data class DisplayFeature(
-        @SerializedName("state") val state: Int,
-        @SerializedName("isSeparating") val isSeparating: Boolean,
-        @SerializedName("bounds") val bounds: Rect<Int>
+  @SerializedName("state") val state: String,
+  @SerializedName("isSeparating") val isSeparating: Boolean,
+  @SerializedName("bounds") val bounds: Rect<Int>
 )

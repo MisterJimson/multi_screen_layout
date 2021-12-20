@@ -31,7 +31,7 @@ class MultiScreenLayoutInfoModel {
       foldDirection = FoldDirection.none;
     }
 
-    this.foldingState = foldingStateFromInt(platformDisplayFeature.state);
+    this.foldingState = foldingStateFromString(platformDisplayFeature.state);
     this.foldDirection = foldDirection;
   }
 

@@ -1,10 +1,10 @@
 import 'package:multi_screen_layout/src/models.dart';
 
-FoldingState foldingStateFromInt(int value) {
+FoldingState foldingStateFromString(String value) {
   switch (value) {
-    case 1:
+    case 'FLAT':
       return FoldingState.flat;
-    case 2:
+    case 'HALF_OPENED':
       return FoldingState.halfOpened;
     default:
       return FoldingState.unknown;
