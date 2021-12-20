@@ -3,7 +3,7 @@ package com.jrai.multi_screen_layout
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 
-class WindowLayoutInfoEventChannelHandler(messenger: BinaryMessenger): EventChannel.StreamHandler {
+class WindowLayoutInfoEventChannelHandler(messenger: BinaryMessenger) : EventChannel.StreamHandler {
     var sink: EventChannel.EventSink? = null
 
     init {
