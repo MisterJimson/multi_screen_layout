@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:multi_screen_layout/multi_screen_layout.dart';
-import 'package:multi_screen_layout_example/SurfaceDuoHingeAngleExample.dart';
 import 'package:multi_screen_layout_example/android_device_posture_info_page.dart';
 import 'package:multi_screen_layout_example/master_detail_layout_example.dart';
+import 'package:multi_screen_layout_example/surface_duo_hinge_angle_example.dart';
 import 'package:multi_screen_layout_example/surface_duo_info_page.dart';
 import 'package:multi_screen_layout_example/two_page_layout_example.dart';
 
