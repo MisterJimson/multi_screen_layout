@@ -7,6 +7,7 @@ A collection of Widgets that make multi screen user experiences easy to build
 - [x] Surface Duo 2
 - [x] Galaxy Z Fold 1 (Flex Mode)
 - [x] Galaxy Z Fold 2 (Flex Mode)
+- [x] Galaxy Z Fold 3 (Flex Mode)
 - [x] Galaxy Z Flip (Flex Mode)
 - [ ] LG Wing
 
